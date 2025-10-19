@@ -1,0 +1,17 @@
+{
+    "split_params": {
+        "test_size": 0.15,
+        "random_state": 98
+    },
+    "vectorizer_params": {
+        "max_features": 80000,
+        "ngram_range": [
+            1,
+            5
+        ]
+    },
+    "vectorization_time_sec": 370.6806457042694,
+    "n_train_samples": 1341820,
+    "n_test_samples": 236792,
+    "vocab_size": 80000
+}

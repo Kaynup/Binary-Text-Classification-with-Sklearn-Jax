@@ -1,0 +1,47 @@
+2025-08-15 10:22:06 - Starting processing for all 3 datasets...
+2025-08-15 10:22:06 - 
+=== Loading Dataset 1/3: dataset_001 ===
+2025-08-15 10:22:07 - Train set shape: (1341820, 10000), Test set shape: (236792, 10000)
+2025-08-15 10:22:07 - Starting RandomizedSearchCV (15 iterations)...
+2025-08-15 10:25:11 - RandomizedSearchCV completed.
+2025-08-15 10:25:11 - Best parameters found: {'solver': 'liblinear', 'penalty': 'l2', 'max_iter': 700, 'C': 1}
+2025-08-15 10:25:11 - Best CV F1 score: 0.8072
+2025-08-15 10:25:12 - Test F1 Score: 0.8090
+2025-08-15 10:25:12 - Finished Dataset 1.
+--------------------------------------------------
+2025-08-15 10:25:12 - 
+=== Loading Dataset 2/3: dataset_002 ===
+2025-08-15 10:25:14 - Train set shape: (1341820, 30000), Test set shape: (236792, 30000)
+2025-08-15 10:25:14 - Starting RandomizedSearchCV (15 iterations)...
+2025-08-15 10:28:36 - RandomizedSearchCV completed.
+2025-08-15 10:28:36 - Best parameters found: {'solver': 'saga', 'penalty': 'l2', 'max_iter': 800, 'C': 1}
+2025-08-15 10:28:36 - Best CV F1 score: 0.8167
+2025-08-15 10:28:37 - Test F1 Score: 0.8185
+2025-08-15 10:28:37 - Finished Dataset 2.
+--------------------------------------------------
+2025-08-15 10:28:35 - 
+=== Loading Dataset 3/3: dataset_003 ===
+2025-08-15 10:28:42 - Train set shape: (1341820, 80000), Test set shape: (236792, 80000)
+2025-08-15 10:28:42 - Starting RandomizedSearchCV (15 iterations)...
+2025-08-15 10:33:05 - RandomizedSearchCV completed.
+2025-08-15 10:33:05 - Best parameters found: {'solver': 'saga', 'penalty': 'l2', 'max_iter': 800, 'C': 1}
+2025-08-15 10:33:05 - Best CV F1 score: 0.8218
+2025-08-15 10:33:05 - Test F1 Score: 0.8237
+2025-08-15 10:33:05 - Finished Dataset 3.
+--------------------------------------------------
+2025-08-15 10:33:06 - 
+=== Summary of all datasets ===
+2025-08-15 10:33:06 - dataset_001: CV F1=0.8072, Test F1=0.8090, Best params={'solver': 'liblinear', 'penalty': 'l2', 'max_iter': 700, 'C': 1}
+2025-08-15 10:33:06 - dataset_002: CV F1=0.8167, Test F1=0.8185, Best params={'solver': 'saga', 'penalty': 'l2', 'max_iter': 800, 'C': 1}
+2025-08-15 10:33:06 - dataset_003: CV F1=0.8218, Test F1=0.8237, Best params={'solver': 'saga', 'penalty': 'l2', 'max_iter': 800, 'C': 1}
+2025-08-15 10:33:06 - 
+=== Best Dataset Overall ===
+2025-08-15 10:33:06 - Dataset ID: dataset_003 (Dataset number: 3)
+2025-08-15 10:33:06 - Dataset Name: dataset_003
+2025-08-15 10:33:06 - Best Test F1 Score: 0.8237
+2025-08-15 10:33:06 - Best Hyperparameters: {'solver': 'saga', 'penalty': 'l2', 'max_iter': 800, 'C': 1}
+2025-08-15 10:47:49 - Starting processing for all 3 datasets...
+2025-08-15 10:47:49 - 
+=== Loading Dataset 1/3: dataset_001 ===
+2025-08-15 10:47:52 - Train set shape: (1341820, 10000), Test set shape: (236792, 10000)
+2025-08-15 10:47:52 - Starting RandomizedSearchCV (15 iterations)...

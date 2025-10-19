@@ -1,0 +1,36 @@
+2025-10-19 07:21:02,349 - INFO - [LOG] Model loaded successfully from /home/legionlinux/miniconda3/envs/jaxenv/__INIT__/Binary-Text-Classification-with-Sklearn-Jax/backend/../models/sklearn/logreg-80k.joblib
+2025-10-19 07:21:02,370 - INFO - [INFO] Starting Sklearn FastAPI server...
+2025-10-19 07:21:27,598 - INFO - Text: 'Hey!! I am very happy!...' | Sentiment: POSITIVE | Time: 9.15 ms
+2025-10-19 07:21:47,604 - INFO - Text: 'I guess you can say I am sad...' | Sentiment: NEGATIVE | Time: 0.99 ms
+2025-10-19 07:22:53,975 - INFO - [LOG] JAX Model loaded successfully from /home/legionlinux/miniconda3/envs/jaxenv/__INIT__/Binary-Text-Classification-with-Sklearn-Jax/backend/../models/jax/bag_of_words-with_pooling/pooling_batch-200_2-hidden=256-128_pipeline.joblib
+2025-10-19 07:22:54,002 - INFO - [INFO] Starting JAX FastAPI server...
+2025-10-19 07:42:48,333 - INFO - [LOG] Model loaded successfully from /home/legionlinux/miniconda3/envs/jaxenv/__INIT__/Binary-Text-Classification-with-Sklearn-Jax/backend/../models/sklearn/logreg-80k.joblib
+2025-10-19 07:42:48,364 - INFO - [INFO] Starting Sklearn FastAPI server...
+2025-10-19 07:43:46,881 - INFO - Text: 'Hey nice to meet you!...' | Sentiment: POSITIVE | Time: 11.0 ms
+2025-10-19 07:44:09,417 - INFO - Text: 'This is really bad!...' | Sentiment: NEGATIVE | Time: 0.64 ms
+2025-10-19 07:52:18,454 - INFO - Text: 'qwwer...' | Sentiment: POSITIVE | Time: 2.01 ms
+2025-10-19 07:53:55,873 - INFO - Text: 'It is my pleasure!!!...' | Sentiment: POSITIVE | Time: 1.15 ms
+2025-10-19 07:54:09,114 - INFO - Text: 'It is a bad thing to do1...' | Sentiment: NEGATIVE | Time: 1.35 ms
+2025-10-19 07:55:37,783 - INFO - Text: 'qwfghjkk...' | Sentiment: POSITIVE | Time: 1.17 ms
+2025-10-19 07:55:53,530 - INFO - Text: 'It is the worst thing I have seen...' | Sentiment: NEGATIVE | Time: 1.71 ms
+2025-10-19 07:57:01,512 - INFO - Text: 'I have a bad idea...' | Sentiment: NEGATIVE | Time: 0.91 ms
+2025-10-19 07:58:12,764 - INFO - [LOG] JAX Model loaded successfully from /home/legionlinux/miniconda3/envs/jaxenv/__INIT__/Binary-Text-Classification-with-Sklearn-Jax/backend/../models/jax/bag_of_words-with_pooling/pooling_batch-200_2-hidden=256-128_pipeline.joblib
+2025-10-19 07:58:12,792 - INFO - [INFO] Starting JAX FastAPI server...
+2025-10-19 08:00:33,393 - INFO - [LOG] JAX Model loaded successfully from /home/legionlinux/miniconda3/envs/jaxenv/__INIT__/Binary-Text-Classification-with-Sklearn-Jax/backend/../models/jax/bag_of_words-with_pooling/pooling_batch-200_2-hidden=256-128_pipeline.joblib
+2025-10-19 08:00:33,406 - INFO - [INFO] Starting JAX FastAPI server...
+2025-10-19 08:00:45,902 - INFO - Unable to initialize backend 'tpu': INTERNAL: Failed to open libtpu.so: libtpu.so: cannot open shared object file: No such file or directory
+2025-10-19 08:00:45,903 - WARNING - An NVIDIA GPU may be present on this machine, but a CUDA-enabled jaxlib is not installed. Falling back to cpu.
+2025-10-19 08:00:46,356 - ERROR - [LOG] Error during prediction: Initializer expected to generate shape (128, 256) but got shape (128, 128) instead for parameter "kernel" in "/Dense_0". (https://flax.readthedocs.io/en/latest/api_reference/flax.errors.html#flax.errors.ScopeParamShapeError)
+2025-10-19 08:00:48,917 - ERROR - [LOG] Error during prediction: Initializer expected to generate shape (128, 256) but got shape (128, 128) instead for parameter "kernel" in "/Dense_0". (https://flax.readthedocs.io/en/latest/api_reference/flax.errors.html#flax.errors.ScopeParamShapeError)
+2025-10-19 08:00:49,726 - ERROR - [LOG] Error during prediction: Initializer expected to generate shape (128, 256) but got shape (128, 128) instead for parameter "kernel" in "/Dense_0". (https://flax.readthedocs.io/en/latest/api_reference/flax.errors.html#flax.errors.ScopeParamShapeError)
+2025-10-19 08:00:50,481 - ERROR - [LOG] Error during prediction: Initializer expected to generate shape (128, 256) but got shape (128, 128) instead for parameter "kernel" in "/Dense_0". (https://flax.readthedocs.io/en/latest/api_reference/flax.errors.html#flax.errors.ScopeParamShapeError)
+2025-10-19 08:00:52,726 - ERROR - [LOG] Error during prediction: Initializer expected to generate shape (128, 256) but got shape (128, 128) instead for parameter "kernel" in "/Dense_0". (https://flax.readthedocs.io/en/latest/api_reference/flax.errors.html#flax.errors.ScopeParamShapeError)
+2025-10-19 08:00:53,128 - ERROR - [LOG] Error during prediction: Initializer expected to generate shape (128, 256) but got shape (128, 128) instead for parameter "kernel" in "/Dense_0". (https://flax.readthedocs.io/en/latest/api_reference/flax.errors.html#flax.errors.ScopeParamShapeError)
+2025-10-19 08:00:53,461 - ERROR - [LOG] Error during prediction: Initializer expected to generate shape (128, 256) but got shape (128, 128) instead for parameter "kernel" in "/Dense_0". (https://flax.readthedocs.io/en/latest/api_reference/flax.errors.html#flax.errors.ScopeParamShapeError)
+2025-10-19 08:00:53,661 - ERROR - [LOG] Error during prediction: Initializer expected to generate shape (128, 256) but got shape (128, 128) instead for parameter "kernel" in "/Dense_0". (https://flax.readthedocs.io/en/latest/api_reference/flax.errors.html#flax.errors.ScopeParamShapeError)
+2025-10-19 08:02:45,381 - INFO - [LOG] JAX Model loaded successfully from /home/legionlinux/miniconda3/envs/jaxenv/__INIT__/Binary-Text-Classification-with-Sklearn-Jax/backend/../models/jax/bag_of_words-with_pooling/pooling_batch-300_pipeline.joblib
+2025-10-19 08:02:45,415 - INFO - [INFO] Starting JAX FastAPI server...
+2025-10-19 08:02:58,052 - INFO - Unable to initialize backend 'tpu': INTERNAL: Failed to open libtpu.so: libtpu.so: cannot open shared object file: No such file or directory
+2025-10-19 08:02:58,052 - WARNING - An NVIDIA GPU may be present on this machine, but a CUDA-enabled jaxlib is not installed. Falling back to cpu.
+2025-10-19 08:02:58,453 - INFO - Text: 'This is my wonderful life...' | Sentiment: POSITIVE | Time: 402.01 ms
+2025-10-19 08:03:18,098 - INFO - Text: 'I thing you are broken and not that good...' | Sentiment: NEGATIVE | Time: 8.75 ms

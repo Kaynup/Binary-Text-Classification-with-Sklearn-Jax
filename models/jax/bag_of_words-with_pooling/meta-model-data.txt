@@ -1,0 +1,65 @@
+----------------------------------------------------------------------------------------------------
+
+# Model: 'pooling_batch-300_pipeline.joblib'
+
+class Classifier(nn.Module):
+    vocab_size: int
+    embed_dim: int = 128
+    hidden_dim: int = 128
+
+    @nn.compact
+    def __call__(self, x):
+        # x: (batch, max_len)
+        emb = nn.Embed(self.vocab_size, self.embed_dim)(x)     # (batch, max_length, embed_dim)
+        pooled = emb.mean(axis=1)          # simple average pooling
+        h = nn.Dense(self.hidden_dim)(pooled)
+        h = nn.relu(h)          # activation
+        out = nn.Dense(1)(h)
+        return out.squeeze(-1)       # logits
+
+- batches = 300
+- epochs = 3
+
+----------------------------------------------------------------------------------------------------
+
+# Model: 'pooling_batch-200-hidden=256_pipeline.joblib'
+
+class Classifier(nn.Module):
+    vocab_size: int
+    embed_dim: int = 128
+    hidden_dim: int = 256
+
+    @nn.compact
+    def __call__(self, x):
+        # x: (batch, max_len)
+        emb = nn.Embed(self.vocab_size, self.embed_dim)(x)     # (batch, max_length, embed_dim)
+        pooled = emb.mean(axis=1)          # simple average pooling
+        h = nn.Dense(self.hidden_dim)(pooled)
+        h = nn.relu(h)          # activation
+        out = nn.Dense(1)(h)
+        return out.squeeze(-1)       # logits
+
+- batches = 200
+- epochs = 3
+
+----------------------------------------------------------------------------------------------------
+
+# Model: 'pooling_batch-200_2-hidden=256-128_pipeline.joblib'
+
+class Classifier(nn.Module):
+    vocab_size: int
+    embed_dim: int = 128
+    hidden_dim_1: int = 256
+    hidden_dim_2: int = 128
+
+    @nn.compact
+    def __call__(self, x):
+        # x: (batch, max_len)
+        emb = nn.Embed(self.vocab_size, self.embed_dim)(x)     # (batch, max_length, embed_dim)
+        pooled = emb.mean(axis=1)          # simple average pooling
+        h = nn.Dense(self.hidden_dim_1)(pooled)
+        h = nn.relu(h)          # activation
+        h = nn.Dense(self.hidden_dim_2)(pooled)
+        h = nn.relu(h)
+        out = nn.Dense(1)(h)
+        return out.squeeze(-1)       # logits
