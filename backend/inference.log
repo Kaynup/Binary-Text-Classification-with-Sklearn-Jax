@@ -34,3 +34,9 @@
 2025-10-19 08:02:58,052 - WARNING - An NVIDIA GPU may be present on this machine, but a CUDA-enabled jaxlib is not installed. Falling back to cpu.
 2025-10-19 08:02:58,453 - INFO - Text: 'This is my wonderful life...' | Sentiment: POSITIVE | Time: 402.01 ms
 2025-10-19 08:03:18,098 - INFO - Text: 'I thing you are broken and not that good...' | Sentiment: NEGATIVE | Time: 8.75 ms
+2025-10-19 08:40:52,945 - INFO - [LOG] JAX Model loaded successfully from /home/legionlinux/miniconda3/envs/jaxenv/__INIT__/Binary-Text-Classification-with-Sklearn-Jax/backend/../models/jax/bag_of_words-with_pooling/pooling_batch-300_pipeline.joblib
+2025-10-19 08:40:52,979 - INFO - [INFO] Starting JAX FastAPI server...
+2025-10-19 08:42:51,287 - INFO - Unable to initialize backend 'tpu': INTERNAL: Failed to open libtpu.so: libtpu.so: cannot open shared object file: No such file or directory
+2025-10-19 08:42:51,288 - WARNING - An NVIDIA GPU may be present on this machine, but a CUDA-enabled jaxlib is not installed. Falling back to cpu.
+2025-10-19 08:42:51,930 - INFO - Text: 'Every challenge you face is not a roadblock but a ...' | Sentiment: POSITIVE | Time: 687.77 ms
+2025-10-19 08:45:29,066 - INFO - Text: 'Even when surrounded by people, you can feel profo...' | Sentiment: NEGATIVE | Time: 11.38 ms

@@ -1,10 +1,10 @@
-# Sentiment Classification with Scikit-learn and JAX/Flax/Optax
+# Sentiment Classification with Scikit-learn and JAX frameworks
 
 ## Overview
 This repository explores binary sentiment classification using two complementary approaches:
 
 - **Scikit-learn baseline**: Logistic Regression with TF-IDF features.  
-- **JAX/Flax/Optax models**: Neural architectures starting from an embedding + pooling classifier, with plans to extend to LSTMs.
+- **FLAX models**: Neural architectures starting from an embedding + pooling classifier, with plans to extend to LSTMs.
 
 The aim is to combine fast prototyping with sklearn and flexible deep learning with JAX, while providing deployable inference endpoints via FastAPI.
 
@@ -25,25 +25,25 @@ While the dataset provides a good foundation for binary sentiment classification
 - **Class Balance**: Depending on preprocessing choices, there may be class imbalance which can bias the model toward the majority label.  
 - **Vocabulary Coverage**: Fixed vocabulary sizes (e.g., 80k in sklearn baseline) can lead to rare or emerging terms being ignored or mapped to `<UNK>`.
 
-These limitations should be considered when evaluating model performance and deploying in real-world scenarios.
+These limitations should be considered when evaluating model performance and deploying in real-world scenarios
 
 ---
 
 ## Current Progress
-- Baseline sklearn model achieved ~82 F1 score with Logistic Regression + TF-IDF (1–5 grams, 80k vocabulary).  
-- JAX prototype (embedding + pooling) has caught up to sklearn baseline performance.  
-- All JAX experiments were run on **CPU only**, since local JAX CUDA installation defaults to the latest CUDA version which is not supported by the RTX 4060 GPU used.  
-- Ongoing experiments with hidden layer depth/width.  
-- Next steps include LSTM models in Flax for improved sequence modeling.
+- Baseline sklearn model achieved ~82 F1 score with Logistic Regression + TF-IDF (1–5 grams, 80k vocabulary)
+- JAX prototype (embedding + pooling) has caught up to sklearn baseline performance
+- All JAX experiments were run on **CPU only**, since local JAX CUDA installation defaults to the latest CUDA version which is not supported by the RTX 4060 GPU locally available to me
+- Ongoing experiments with hidden layer depth/width
+- Next steps include LSTM models in Flax for improved sequence modeling
 
 ---
 
 ## Deployment
-Both sklearn and JAX models can be deployed locally with FastAPI.
+Both sklearn and JAX models can be deployed locally with FastAPI
 
-- `sklearn-app.py`: Serves the Logistic Regression model.  
-- `jax-app.py`: Serves the Flax neural network (embedding + pooling).  
-- All inference activity is logged to `local-deploy/inference.log`.
+- `sklearn-app.py`: Serves the Logistic Regression model
+- `jax-app.py`: Serves the Flax neural network (embedding + pooling)
+- All inference activity is logged to static `logs/inference.log` and dynamic `backend/inference.log`
 
 ### Run locally
 ```bash
@@ -52,18 +52,18 @@ pip install -r requirements.txt
 
 Start either server:
 ```bash
-uvicorn local-deploy.sklearn-app:app --reload
-uvicorn local-deploy.jax-app:app --reload
+uvicorn backend.sklearn-app:app --reload
+uvicorn backend.jax-app:app --reload   # NOTE:- Currently supports a single pipelined model
 ```
 
-### Example request
+#### Example request with CURL
 ```bash
 curl -X POST "http://127.0.0.1:8000/predict" \
      -H "Content-Type: application/json" \
      -d '{"text": "I absolutely loved this movie!"}'
 ```
 
-### Example response (sklearn)
+- ***Example response (sklearn)***
 ```json
 {
   "input": "I absolutely loved this movie!",
@@ -72,7 +72,7 @@ curl -X POST "http://127.0.0.1:8000/predict" \
 }
 ```
 
-### Example response (jax)
+- ***Example response (jax)***
 ```json
 {
   "input": "I absolutely loved this movie!",
@@ -84,39 +84,28 @@ curl -X POST "http://127.0.0.1:8000/predict" \
 
 ---
 
-## Deployment Logs Summary
-Logs from local testing show the following:
+### Running on Frontend
+> ***A sentient robot gives out the sentiment based on the user's sentence input.***
 
-- **Model Initialization**  
-  - Multiple successful model loads across sessions.  
-  - Occasional initialization errors (e.g., undefined variables, misloaded artifacts).  
-  - Hardware fallback messages observed: TPU unavailable, CUDA-enabled JAX not installed (defaulted to CPU).
+![Initial Robot](src/images/initial.png)
 
-- **Inference Behavior**  
-  - Predictions worked consistently on both positive and negative inputs.  
-  - Example positive predictions:  
-    - "This product is amazing!" → 1  
-    - "hi" → 1  
-    - "This is fabulous" → 1  
-  - Example negative predictions:  
-    - "The boy looked so sad." → 0  
-    - "I had a very bad day." → 0  
-    - "You are the worst" → 0  
-    - "I like this place very much" → 0  
+> ***A good sentiment***
 
-- **Performance**  
-  - Typical inference times: **1–3 ms** for short texts on CPU.  
-  - Some outliers (e.g., ~800 ms) likely due to cold start or CPU fallback.  
-  - After warm-up, predictions stabilized in the 1–20 ms range.
+![Positive Sentiment](src/images/positive_sentiment.png)
 
-- **Errors Encountered**  
-  - `'dict' object has no attribute 'predict'` → indicates incorrect object passed into inference pipeline.  
-  - `name 'vocab_size' is not defined` → issue with model restoration code.  
-  - Backend initialization warnings regarding TPU and GPU support.  
+> ***A bad sentiment***
 
-Overall, inference pipeline is functional and performant, with occasional initialization issues that need handling.
+![Negative Sentiment](src/images/negative_sentiment.png)
+
+> ***History saving and model info with inference time***
+
+![Inference Specs](src/images/other_info.png)
 
 ---
 
-## License
-MIT License.
+## References
+- Adeoluwa Adeboye, Juggernaut Sentiment Analysis Dataset: [Kaggle](https://www.kaggle.com/datasets/adeoluwa/juggernaut-sentiment-analysis)
+- Scikit-learn Documentation: [https://scikit-learn.org/stable/](https://scikit-learn.org/stable/)
+- JAX | Flax | Optax Documentation: [https://jax.readthedocs.io/](https://jax.readthedocs.io/) | [https://flax.readthedocs.io/](https://flax.readthedocs.io/)
+
+---
