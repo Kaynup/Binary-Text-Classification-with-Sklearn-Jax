@@ -2,10 +2,11 @@
 __pycache__/
 *.py[cod]
 *$py.class
+**/__pycache__/
+**/.ipynb_checkpoints/
 
 # Ignore Jupyter notebook checkpoints
 .ipynb_checkpoints/
 
-# In case of nested directories
-**/__pycache__/
-**/.ipynb_checkpoints/
+# logs
+**/inference.log

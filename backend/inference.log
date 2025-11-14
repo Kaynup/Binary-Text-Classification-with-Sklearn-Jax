@@ -45,3 +45,8 @@
 2025-10-20 04:53:30,601 - INFO - Unable to initialize backend 'tpu': INTERNAL: Failed to open libtpu.so: libtpu.so: cannot open shared object file: No such file or directory
 2025-10-20 04:53:30,601 - WARNING - An NVIDIA GPU may be present on this machine, but a CUDA-enabled jaxlib is not installed. Falling back to cpu.
 2025-10-20 04:53:31,228 - INFO - Text: 'i am sad...' | Sentiment: NEGATIVE | Time: 652.9 ms
+2025-11-14 07:21:03,023 - INFO - [LOG] JAX Model loaded successfully from /home/legionlinux/miniconda3/envs/jaxenv/__INIT__/Binary-Text-Classification-with-Sklearn-Jax/backend/../models/jax/bag_of_words-with_pooling/pooling_batch-300_pipeline.joblib
+2025-11-14 07:21:03,049 - INFO - [INFO] Starting JAX FastAPI server...
+2025-11-14 07:24:41,373 - INFO - Unable to initialize backend 'tpu': INTERNAL: Failed to open libtpu.so: libtpu.so: cannot open shared object file: No such file or directory
+2025-11-14 07:24:41,373 - WARNING - An NVIDIA GPU may be present on this machine, but a CUDA-enabled jaxlib is not installed. Falling back to cpu.
+2025-11-14 07:24:41,851 - INFO - Text: 'it is a good day...' | Sentiment: POSITIVE | Time: 501.31 ms
