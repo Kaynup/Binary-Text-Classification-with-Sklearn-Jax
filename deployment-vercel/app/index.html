@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sentiment Analyzer - AI Detector</title>
   <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
   <!-- Animated Background -->
   <div class="animated-bg">
@@ -19,8 +21,8 @@
     <!-- Header -->
     <header class="header">
       <h1 class="title">
-        <span class="title-icon">🤖</span>
-            Live Sentiment Analyzer
+        <span class="title-icon"></span>
+        Live Sentiment Analyzer
         <span class="title-glow"></span>
       </h1>
       <p class="subtitle">Advanced AI-powered emotion detection</p>
@@ -133,17 +135,13 @@
       <!-- Input Section -->
       <div class="input-section">
         <div class="input-wrapper">
-          <textarea 
-            id="text-input" 
-            placeholder="Share your thoughts here... I'll detect the sentiment! 💭"
-            rows="4"
-            maxlength="500"
-          ></textarea>
+          <textarea id="text-input" placeholder="Share your thoughts here... I'll detect the sentiment! 💭" rows="4"
+            maxlength="500"></textarea>
           <div class="char-counter">
             <span id="char-count">0</span> / 500
           </div>
         </div>
-        
+
         <button class="predict-btn" id="predict-btn" onclick="makePrediction()">
           <span class="btn-ripple"></span>
           <span class="btn-text">Analyze Sentiment</span>
@@ -162,11 +160,11 @@
             <p class="result-text" id="result-text"></p>
             <div class="result-meta">
               <span class="meta-item">
-                <strong>⚡ Speed:</strong> 
+                <strong>⚡ Speed:</strong>
                 <span id="inference-time">--</span> ms
               </span>
               <span class="meta-item">
-                <strong>🤖 Model:</strong> 
+                <strong>🤖 Model:</strong>
                 <span id="model-type">--</span>
               </span>
             </div>
@@ -207,4 +205,5 @@
 
   <script src="dep.js"></script>
 </body>
+
 </html>
