@@ -1,12 +1,14 @@
 {
     "version": 2,
+    "functions": {
+        "api/predict.py": {
+            "runtime": "python3.10"
+        }
+    },
     "builds": [
         {
             "src": "api/predict.py",
-            "use": "@vercel/python",
-            "config": {
-                "runtime": "python3.10"
-            }
+            "use": "@vercel/python"
         },
         {
             "src": "app/**",
