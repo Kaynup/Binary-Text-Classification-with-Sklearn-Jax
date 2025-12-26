@@ -24,7 +24,23 @@
 
 ---
 
-### 3. 404 on API Endpoint
+### 3. API Returning 401 Unauthorized (Deployment Protection)
+
+**Symptoms:** API calls return 401, UI stuck on "Ready to analyze", browser shows Vercel authentication page
+
+**Cause:** Vercel Deployment Protection is enabled (default for new projects)
+
+**Fix:**
+1. Go to **Vercel Dashboard** → Select your project
+2. Go to **Settings** → **Deployment Protection**
+3. **Disable** "Vercel Authentication" or set protection to allow public access
+4. Redeploy
+
+> ⚠️ Preview deployments (non-production) often have protection enabled by default
+
+---
+
+### 4. 404 on API Endpoint
 
 **Symptoms:** `/api/predict` returns 404
 
@@ -35,7 +51,7 @@
 
 ---
 
-### 4. Slow First Request (Cold Start)
+### 5. Slow First Request (Cold Start)
 
 **Symptoms:** First API call takes 3-5+ seconds
 
@@ -48,7 +64,7 @@
 
 ---
 
-### 5. Model Load Failures
+### 6. Model Load Failures
 
 **Symptoms:** "Model could not be loaded" error
 
@@ -64,7 +80,7 @@ print(f"File exists: {os.path.exists(model_path)}")
 
 ---
 
-### 6. Static Files Not Loading
+### 7. Static Files Not Loading
 
 **Symptoms:** HTML loads but CSS/JS show 404
 

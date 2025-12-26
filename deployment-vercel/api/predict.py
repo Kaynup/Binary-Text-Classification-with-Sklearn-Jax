@@ -1,20 +1,22 @@
 import joblib
 import time
 import os
+from pathlib import Path
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 # Get the directory where this script is located
-SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+# Use pathlib for more reliable path resolution on Vercel
+SCRIPT_DIR = Path(__file__).parent.resolve()
 
 # Model path - relative to the deployment root (one level up from api/)
-model_path = os.path.join(
-    SCRIPT_DIR,
-    "..",
-    "model",
-    "logreg-80k.joblib"
-)
+model_path = SCRIPT_DIR.parent / "model" / "logreg-80k.joblib"
+
+# Debug: Print paths for Vercel logs
+print(f"[DEBUG] SCRIPT_DIR: {SCRIPT_DIR}")
+print(f"[DEBUG] model_path: {model_path}")
+print(f"[DEBUG] model_path exists: {model_path.exists()}")
 
 # Model load (lazy loading pattern for serverless)
 model = None
@@ -23,7 +25,17 @@ def get_model():
     global model
     if model is None:
         try:
-            model = joblib.load(model_path)
+            if not model_path.exists():
+                print(f"[ERROR] Model file not found at: {model_path}")
+                # List contents of parent directory for debugging
+                parent = model_path.parent
+                if parent.exists():
+                    print(f"[DEBUG] Contents of {parent}: {list(parent.iterdir())}")
+                else:
+                    print(f"[DEBUG] Parent directory does not exist: {parent}")
+                raise FileNotFoundError(f"Model not found at {model_path}")
+            
+            model = joblib.load(str(model_path))
             print(f"[LOG] Model loaded successfully from {model_path}")
         except Exception as e:
             print(f"[LOG] Failed to load model: {e}")
