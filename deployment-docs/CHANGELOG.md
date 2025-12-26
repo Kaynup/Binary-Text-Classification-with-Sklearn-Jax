@@ -2,6 +2,27 @@
 
 All notable changes to this deployment will be documented in this file.
 
+## [1.0.1] - 2025-12-26
+
+### Fixed
+- Python runtime now correctly specified as 3.10 using `functions` block in `vercel.json`
+- Improved model path resolution using `pathlib` for Vercel serverless environment
+- Added debug logging for model path troubleshooting
+
+### Technical Details
+- Changed `vercel.json` from deprecated `config.runtime` to top-level `functions` block
+- Model loading now uses `Path(__file__).parent.resolve()` for reliable path resolution
+- Added file existence check before model load with detailed error logging
+
+### Testing Results (Local)
+| Test | Input | Result |
+|------|-------|--------|
+| Positive | "I love this product!" | ✅ prediction: 1 |
+| Negative | "This is terrible!" | ✅ prediction: 0 |
+| Health check | GET /api/predict | ✅ Returns status |
+
+---
+
 ## [1.0.0] - 2025-12-26
 
 ### Added
