@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sentiment Analyzer - AI Detector</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Animated Background -->
+  <div class="animated-bg">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+    <div class="particle-container" id="particles"></div>
+  </div>
+
+  <div class="container">
+    <!-- Header -->
+    <header class="header">
+      <h1 class="title">
+        <span class="title-icon"></span>
+            Live Sentiment Analyzer
+        <span class="title-glow"></span>
+      </h1>
+      <p class="subtitle">Advanced AI-powered emotion detection</p>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Animated Character Section -->
+      <div class="character-container">
+        <div class="character" id="character">
+          <!-- Neutral Robot -->
+          <div class="robot neutral-robot" id="neutral-robot">
+            <div class="robot-head">
+              <div class="antenna">
+                <div class="antenna-ball"></div>
+              </div>
+              <div class="robot-face">
+                <div class="robot-eyes">
+                  <div class="robot-eye left">
+                    <div class="eye-shine"></div>
+                  </div>
+                  <div class="robot-eye right">
+                    <div class="eye-shine"></div>
+                  </div>
+                </div>
+                <div class="robot-mouth neutral-mouth">
+                  <div class="mouth-line"></div>
+                </div>
+              </div>
+            </div>
+            <div class="robot-body">
+              <div class="body-light"></div>
+              <div class="body-panel"></div>
+            </div>
+          </div>
+
+          <!-- Happy Robot -->
+          <div class="robot happy-robot" id="happy-robot" style="display: none;">
+            <div class="robot-head">
+              <div class="antenna">
+                <div class="antenna-ball happy-glow"></div>
+              </div>
+              <div class="robot-face">
+                <div class="robot-eyes">
+                  <div class="robot-eye left happy-eye">
+                    <div class="eye-shine"></div>
+                  </div>
+                  <div class="robot-eye right happy-eye">
+                    <div class="eye-shine"></div>
+                  </div>
+                </div>
+                <div class="robot-mouth happy-mouth">
+                  <div class="smile-arc"></div>
+                </div>
+                <div class="cheeks">
+                  <div class="cheek left"></div>
+                  <div class="cheek right"></div>
+                </div>
+              </div>
+            </div>
+            <div class="robot-body">
+              <div class="body-light happy-light"></div>
+              <div class="body-panel"></div>
+              <div class="heart-burst">
+                <div class="heart">💚</div>
+                <div class="heart">💚</div>
+                <div class="heart">💚</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sad Robot -->
+          <div class="robot sad-robot" id="sad-robot" style="display: none;">
+            <div class="robot-head">
+              <div class="antenna">
+                <div class="antenna-ball sad-glow"></div>
+              </div>
+              <div class="robot-face">
+                <div class="robot-eyes">
+                  <div class="robot-eye left sad-eye">
+                    <div class="tear"></div>
+                  </div>
+                  <div class="robot-eye right sad-eye">
+                    <div class="tear"></div>
+                  </div>
+                </div>
+                <div class="robot-mouth sad-mouth">
+                  <div class="frown-arc"></div>
+                </div>
+              </div>
+            </div>
+            <div class="robot-body">
+              <div class="body-light sad-light"></div>
+              <div class="body-panel"></div>
+              <div class="rain-drops">
+                <div class="drop"></div>
+                <div class="drop"></div>
+                <div class="drop"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="character-glow" id="character-glow"></div>
+        </div>
+        <p class="character-message" id="character-message">
+          Ready to analyze your sentiment...
+        </p>
+      </div>
+
+      <!-- Input Section -->
+      <div class="input-section">
+        <div class="input-wrapper">
+          <textarea 
+            id="text-input" 
+            placeholder="Share your thoughts here... I'll detect the sentiment! 💭"
+            rows="4"
+            maxlength="500"
+          ></textarea>
+          <div class="char-counter">
+            <span id="char-count">0</span> / 500
+          </div>
+        </div>
+        
+        <button class="predict-btn" id="predict-btn" onclick="makePrediction()">
+          <span class="btn-ripple"></span>
+          <span class="btn-text">Analyze Sentiment</span>
+          <span class="btn-icon">⚡</span>
+        </button>
+      </div>
+
+      <!-- Results Section -->
+      <div class="results-section" id="results-section" style="display: none;">
+        <div class="result-card" id="result-card">
+          <div class="result-header">
+            <h3>Analysis Result</h3>
+            <span class="result-badge" id="result-badge"></span>
+          </div>
+          <div class="result-body">
+            <p class="result-text" id="result-text"></p>
+            <div class="result-meta">
+              <span class="meta-item">
+                <strong>⚡ Speed:</strong> 
+                <span id="inference-time">--</span> ms
+              </span>
+              <span class="meta-item">
+                <strong>🤖 Model:</strong> 
+                <span id="model-type">--</span>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- History Section -->
+      <div class="history-section">
+        <div class="history-header">
+          <h3>Recent Analyses</h3>
+          <button class="clear-btn" id="clear-history" onclick="clearHistory()">
+            🗑️ Clear
+          </button>
+        </div>
+        <div class="history-list" id="history-list">
+          <p class="empty-state">No analyses yet. Start by entering some text above!</p>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <p>Powered by FastAPI and JAX | Made by Punyak</p>
+    </footer>
+  </div>
+
+  <!-- Loading Overlay -->
+  <div class="loading-overlay" id="loading-overlay">
+    <div class="loading-container">
+      <div class="loading-robot">
+        <div class="loading-head"></div>
+        <div class="loading-body"></div>
+      </div>
+      <p class="loading-text">Analyzing...</p>
+    </div>
+  </div>
+
+  <!-- Configuration (update config.js with your backend URL) -->
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

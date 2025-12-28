@@ -1,0 +1,16 @@
+# Render deployment configuration
+# https://render.com/docs/yaml-spec
+
+services:
+  - type: web
+    name: sentiment-api
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: PORT
+        value: 8000
+      - key: ENABLE_JAX
+        value: false
+    healthCheckPath: /health
+    autoDeploy: true
+    plan: free
