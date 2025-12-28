@@ -9,7 +9,6 @@ WORKDIR /app
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
-ENV PORT=8000
 ENV ENABLE_JAX=false
 
 # Install system dependencies
@@ -27,12 +26,9 @@ RUN pip install --no-cache-dir --upgrade pip && \
 # Copy application code
 COPY . .
 
-# Expose port
+# Expose port (Railway will override with PORT env var)
 EXPOSE 8000
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
-    CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"
-
-# Run the application
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Run the application - Use shell form to allow variable substitution
+# Railway provides PORT env variable
+CMD uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000}

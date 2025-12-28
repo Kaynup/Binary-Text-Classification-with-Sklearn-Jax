@@ -6,8 +6,8 @@
 // For production: Use your Railway/Render URL, e.g., https://your-app.railway.app/predict
 
 window.APP_CONFIG = {
-    // ⚠️ IMPORTANT: Replace this URL with your actual backend URL after deploying
-    API_URL: 'https://YOUR-BACKEND-URL.railway.app/predict',
+    // ✅ Backend deployed on Railway
+    API_URL: 'https://lavish-generosity-production.up.railway.app/predict',
 
     // App metadata
     APP_NAME: 'Sentiment Analyzer',
