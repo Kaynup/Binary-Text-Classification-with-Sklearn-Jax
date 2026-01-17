@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sentiment Analyzer - AI Detector</title>
   <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
   <!-- Animated Background -->
   <div class="animated-bg">
@@ -20,16 +22,29 @@
     <header class="header">
       <h1 class="title">
         <span class="title-icon"></span>
-            Live Sentiment Analyzer
+        Live Sentiment Analyzer
         <span class="title-glow"></span>
       </h1>
-      <p class="subtitle">Advanced AI-powered emotion detection</p>
+      <p class="subtitle">Juggernaut Sentiment Analysis</p>
     </header>
 
     <!-- Main Content -->
     <main class="main-content">
       <!-- Animated Character Section -->
       <div class="character-container">
+        <!-- Bookmark Model Selector (behind robot) -->
+        <div class="model-bookmark" id="model-bookmark">
+          <div class="bookmark-tab" id="bookmark-tab">
+            <span class="bookmark-icon">⚙</span>
+          </div>
+          <div class="bookmark-dropdown" id="bookmark-dropdown">
+            <label for="model-select">Select Model:</label>
+            <select id="model-select" class="model-dropdown">
+              <option value="">Loading models...</option>
+            </select>
+          </div>
+        </div>
+
         <div class="character" id="character">
           <!-- Neutral Robot -->
           <div class="robot neutral-robot" id="neutral-robot">
@@ -37,6 +52,9 @@
               <div class="antenna">
                 <div class="antenna-ball"></div>
               </div>
+              <!-- Tattoo decorations -->
+              <div class="robot-tattoo tattoo-left" id="tattoo-left-neutral"></div>
+              <div class="robot-tattoo tattoo-right" id="tattoo-right-neutral"></div>
               <div class="robot-face">
                 <div class="robot-eyes">
                   <div class="robot-eye left">
@@ -53,6 +71,8 @@
             </div>
             <div class="robot-body">
               <div class="body-light"></div>
+              <!-- Body tattoo stripe -->
+              <div class="body-tattoo" id="body-tattoo-neutral"></div>
               <div class="body-panel"></div>
             </div>
           </div>
@@ -63,6 +83,9 @@
               <div class="antenna">
                 <div class="antenna-ball happy-glow"></div>
               </div>
+              <!-- Tattoo decorations -->
+              <div class="robot-tattoo tattoo-left" id="tattoo-left-happy"></div>
+              <div class="robot-tattoo tattoo-right" id="tattoo-right-happy"></div>
               <div class="robot-face">
                 <div class="robot-eyes">
                   <div class="robot-eye left happy-eye">
@@ -83,6 +106,8 @@
             </div>
             <div class="robot-body">
               <div class="body-light happy-light"></div>
+              <!-- Body tattoo stripe -->
+              <div class="body-tattoo" id="body-tattoo-happy"></div>
               <div class="body-panel"></div>
               <div class="heart-burst">
                 <div class="heart">💚</div>
@@ -98,6 +123,9 @@
               <div class="antenna">
                 <div class="antenna-ball sad-glow"></div>
               </div>
+              <!-- Tattoo decorations -->
+              <div class="robot-tattoo tattoo-left" id="tattoo-left-sad"></div>
+              <div class="robot-tattoo tattoo-right" id="tattoo-right-sad"></div>
               <div class="robot-face">
                 <div class="robot-eyes">
                   <div class="robot-eye left sad-eye">
@@ -114,6 +142,8 @@
             </div>
             <div class="robot-body">
               <div class="body-light sad-light"></div>
+              <!-- Body tattoo stripe -->
+              <div class="body-tattoo" id="body-tattoo-sad"></div>
               <div class="body-panel"></div>
               <div class="rain-drops">
                 <div class="drop"></div>
@@ -130,24 +160,21 @@
         </p>
       </div>
 
+
+
       <!-- Input Section -->
       <div class="input-section">
         <div class="input-wrapper">
-          <textarea 
-            id="text-input" 
-            placeholder="Share your thoughts here... I'll detect the sentiment! 💭"
-            rows="4"
-            maxlength="500"
-          ></textarea>
+          <textarea id="text-input" placeholder="Share your thoughts here... I'll detect the sentiment!" rows="4"
+            maxlength="500"></textarea>
           <div class="char-counter">
             <span id="char-count">0</span> / 500
           </div>
         </div>
-        
+
         <button class="predict-btn" id="predict-btn" onclick="makePrediction()">
           <span class="btn-ripple"></span>
           <span class="btn-text">Analyze Sentiment</span>
-          <span class="btn-icon">⚡</span>
         </button>
       </div>
 
@@ -155,18 +182,21 @@
       <div class="results-section" id="results-section" style="display: none;">
         <div class="result-card" id="result-card">
           <div class="result-header">
-            <h3>Analysis Result</h3>
+            <h3>Analysis Result <span class="info-icon"
+                title="AI models can make mistakes, especially the basic ones. Results should be verified for critical decisions.">ⓘ</span>
+            </h3>
             <span class="result-badge" id="result-badge"></span>
           </div>
           <div class="result-body">
             <p class="result-text" id="result-text"></p>
             <div class="result-meta">
               <span class="meta-item">
-                <strong>⚡ Speed:</strong> 
-                <span id="inference-time">--</span> ms
+                <strong>Speed:</strong>
+                <span id="inference-time">--</span> ms + <span id="network-delay">--</span> ms <span
+                  class="delay-label">(network)</span>
               </span>
               <span class="meta-item">
-                <strong>🤖 Model:</strong> 
+                <strong>Model:</strong>
                 <span id="model-type">--</span>
               </span>
             </div>
@@ -177,9 +207,11 @@
       <!-- History Section -->
       <div class="history-section">
         <div class="history-header">
-          <h3>Recent Analyses</h3>
+          <h3>Recent Analyses <span class="info-icon"
+              title="Speed breakdown: Model inference time + Network delay (round-trip time to reach the frontend from backend)">ⓘ</span>
+          </h3>
           <button class="clear-btn" id="clear-history" onclick="clearHistory()">
-            🗑️ Clear
+            Clear
           </button>
         </div>
         <div class="history-list" id="history-list">
@@ -207,4 +239,5 @@
 
   <script src="app.js"></script>
 </body>
+
 </html>

@@ -4,15 +4,19 @@ import logging
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 import os
-from flax import linen as nn, serialization
-from flax.training import train_state
-import optax
 import re
 import jax
 import jax.numpy as jnp
+from flax import linen as nn, serialization
+from flax.training import train_state
+import optax
 
 # Middleware
 from fastapi.middleware.cors import CORSMiddleware
+
+# =============================================================================
+# TOKENIZATION & ENCODING (shared by JAX models)
+# =============================================================================
 
 def custom_tokenizer(text):
     text = text.lower()
@@ -32,11 +36,15 @@ def encode_tokens(tokens, word2idx, max_len=34):
         return ids[:max_len]
     return ids + [word2idx[PAD]] * (max_len - len(ids))
 
+# =============================================================================
+# JAX MODEL DEFINITIONS
+# =============================================================================
+
 class TrainState(train_state.TrainState):
     pass
 
 class Classifier(nn.Module):
-    """Model: pooling_batch-300 (hidden_dim=128)"""
+    """Model: jax-pooling-300 (hidden_dim=128)"""
     vocab_size: int
     embed_dim: int = 128
     hidden_dim: int = 128
@@ -51,7 +59,7 @@ class Classifier(nn.Module):
         return out.squeeze(-1)
 
 class ClassifierHidden256(nn.Module):
-    """Model: pooling_batch-200-hidden=256"""
+    """Model: jax-pooling-200-h256"""
     vocab_size: int
     embed_dim: int = 128
     hidden_dim: int = 256
@@ -66,7 +74,7 @@ class ClassifierHidden256(nn.Module):
         return out.squeeze(-1)
 
 class ClassifierTwoHidden(nn.Module):
-    """Model: pooling_batch-200_2-hidden=256-128"""
+    """Model: jax-pooling-200-2h (256->128)"""
     vocab_size: int
     embed_dim: int = 128
     hidden_dim_1: int = 256
@@ -78,31 +86,23 @@ class ClassifierTwoHidden(nn.Module):
         pooled = emb.mean(axis=1)
         h = nn.Dense(self.hidden_dim_1)(pooled)
         h = nn.relu(h)
-        h = nn.Dense(self.hidden_dim_2)(pooled)  # Note: uses pooled per original architecture
+        h = nn.Dense(self.hidden_dim_2)(pooled)
         h = nn.relu(h)
         out = nn.Dense(1)(h)
         return out.squeeze(-1)
 
-def restore_state(msgpack_path, model, vocab_size, max_len=34):
-    rng = jax.random.PRNGKey(0)
-    dummy = jnp.ones((1, max_len), dtype=jnp.int32)
-    params = model.init(rng, dummy)["params"]
+# =============================================================================
+# JAX INFERENCE PIPELINE
+# =============================================================================
 
-    tx = optax.adam(1e-3)
-    state = TrainState.create(apply_fn=model.apply, params=params, tx=tx)
-
-    with open(msgpack_path, "rb") as f:
-        state = serialization.from_bytes(state, f.read())
-
-    return state
-
-class InferencePipeline:
+class JaxInferencePipeline:
     def __init__(self, model, params, word2idx, max_len=34, threshold=0.5):
         self.model = model
         self.params = params
         self.word2idx = word2idx
         self.max_len = max_len
         self.threshold = threshold
+        self.is_jax = True
 
     def preprocess(self, texts):
         tok = [custom_tokenizer(t) for t in texts]
@@ -118,25 +118,31 @@ class InferencePipeline:
         probs = self.predict_proba(texts)
         return (probs >= self.threshold).astype(int)
 
-    def save(self, path):
-        joblib.dump({
-            "params": self.params,
-            "word2idx": self.word2idx,
-            "max_len": self.max_len,
-            "threshold": self.threshold,
-        }, path)
-
     @classmethod
     def load(cls, path, model):
         data = joblib.load(path)
         return cls(model, data["params"], data["word2idx"],
                    data["max_len"], data["threshold"])
 
-# Get the directory where this script is located
-SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-MODELS_DIR = os.path.join(SCRIPT_DIR, "..", "models", "jax", "bag_of_words-with_pooling")
+# =============================================================================
+# SKLEARN WRAPPER (for unified interface)
+# =============================================================================
 
-# Logging Setup - save logs in the backend directory
+class SklearnWrapper:
+    def __init__(self, model):
+        self.model = model
+        self.is_jax = False
+    
+    def predict(self, texts):
+        return self.model.predict(texts)
+
+# =============================================================================
+# PATHS & LOGGING
+# =============================================================================
+
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+MODELS_DIR = os.path.join(SCRIPT_DIR, "..", "models")
+
 log_file_path = os.path.join(SCRIPT_DIR, "inference.log")
 logging.basicConfig(
     level=logging.INFO,
@@ -148,49 +154,92 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# Model configurations
-MODEL_CONFIGS = [
+# =============================================================================
+# LOAD ALL MODELS
+# =============================================================================
+
+MODEL_REGISTRY = {}
+DEFAULT_MODEL = "sklearn-logreg"
+
+# Sklearn model
+sklearn_path = os.path.join(MODELS_DIR, "sklearn", "logreg-80k.joblib")
+try:
+    sklearn_model = joblib.load(sklearn_path)
+    MODEL_REGISTRY["sklearn-logreg"] = SklearnWrapper(sklearn_model)
+    logger.info(f"[LOG] Loaded sklearn model: sklearn-logreg")
+except Exception as e:
+    logger.error(f"[LOG] Failed to load sklearn model: {e}")
+
+# JAX models
+JAX_CONFIGS = [
     {
-        "name": "pooling-300",
-        "file": "pooling_batch-300_pipeline.joblib",
+        "name": "jax-pooling-300",
+        "file": "bag_of_words-with_pooling/pooling_batch-300_pipeline.joblib",
         "class": Classifier,
     },
     {
-        "name": "pooling-200-h256",
-        "file": "pooling_batch-200-hidden=256_pipeline.joblib",
+        "name": "jax-pooling-200-h256",
+        "file": "bag_of_words-with_pooling/pooling_batch-200-hidden=256_pipeline.joblib",
         "class": ClassifierHidden256,
     },
     {
-        "name": "pooling-200-2h",
-        "file": "pooling_batch-200_2-hidden=256-128_pipeline.joblib",
+        "name": "jax-pooling-200-2h",
+        "file": "bag_of_words-with_pooling/pooling_batch-200_2-hidden=256-128_pipeline.joblib",
         "class": ClassifierTwoHidden,
     },
 ]
 
-# Model Registry - load all models
-MODEL_REGISTRY = {}
-DEFAULT_MODEL = "pooling-300"
-
-try:
-    for cfg in MODEL_CONFIGS:
-        model_path = os.path.join(MODELS_DIR, cfg["file"])
+for cfg in JAX_CONFIGS:
+    try:
+        model_path = os.path.join(MODELS_DIR, "jax", cfg["file"])
         model_instance = cfg["class"](vocab_size=256995)
-        MODEL_REGISTRY[cfg["name"]] = InferencePipeline.load(model_path, model_instance)
-        logger.info(f"[LOG] JAX Model loaded: {cfg['name']} from {model_path}")
-    logger.info(f"[LOG] All {len(MODEL_REGISTRY)} JAX models loaded successfully!")
-except Exception as e:
-    logger.error(f"[LOG] Failed to load models: {e}")
-    raise RuntimeError("Models could not be loaded.")
+        MODEL_REGISTRY[cfg["name"]] = JaxInferencePipeline.load(model_path, model_instance)
+        logger.info(f"[LOG] Loaded JAX model: {cfg['name']}")
+    except Exception as e:
+        logger.error(f"[LOG] Failed to load JAX model {cfg['name']}: {e}")
 
-# Input Schema
+logger.info(f"[LOG] Total models loaded: {len(MODEL_REGISTRY)}")
+
+# =============================================================================
+# FASTAPI APPLICATION
+# =============================================================================
+
 class TextInput(BaseModel):
     text: str
-    model: str = DEFAULT_MODEL  # Model selection with default
+    model: str = DEFAULT_MODEL
 
-# FastAPI Init
-app = FastAPI(title="Text Classifier API (JAX)", version="1.0")
+app = FastAPI(title="Unified Sentiment Classifier API", version="2.0")
 
-# Routes
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+@app.get("/")
+def root():
+    return {
+        "message": "Unified Sentiment Classifier API is running!",
+        "available_models": list(MODEL_REGISTRY.keys()),
+        "default_model": DEFAULT_MODEL,
+        "endpoints": {
+            "predict": "/predict (POST)",
+            "models": "/models (GET)",
+            "docs": "/docs"
+        }
+    }
+
+@app.get("/models")
+def list_models():
+    """List all available models"""
+    return {
+        "available_models": list(MODEL_REGISTRY.keys()),
+        "default": DEFAULT_MODEL,
+        "count": len(MODEL_REGISTRY)
+    }
+
 @app.post("/predict")
 def predict(input_data: TextInput):
     # Validate model selection
@@ -203,13 +252,14 @@ def predict(input_data: TextInput):
     try:
         start_time = time.time()
         
-        # Get selected model and run prediction
         selected_model = MODEL_REGISTRY[input_data.model]
         prediction = selected_model.predict([input_data.text])[0]
         
-        inference_time = round((time.time() - start_time) * 1000, 2)  # ms
+        inference_time = round((time.time() - start_time) * 1000, 2)
         
         sentiment = "POSITIVE" if prediction == 1 else "NEGATIVE"
+        is_jax = getattr(selected_model, 'is_jax', False)
+        
         logger.info(
             f"Model: {input_data.model} | "
             f"Text: '{input_data.text[:50]}...' | "
@@ -222,43 +272,14 @@ def predict(input_data: TextInput):
             "prediction": int(prediction),
             "inference_time_ms": inference_time,
             "model_used": input_data.model,
-            "Jax model": True
+            "Jax model": is_jax
         }
 
     except Exception as e:
         logger.error(f"[LOG] Error during prediction: {e}")
         raise HTTPException(status_code=500, detail="Model inference failed.")
 
-@app.get("/models")
-def list_models():
-    """List all available JAX models"""
-    return {
-        "available_models": list(MODEL_REGISTRY.keys()),
-        "default": DEFAULT_MODEL,
-        "count": len(MODEL_REGISTRY)
-    }
-
-# UI inference
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-@app.get("/")
-def root():
-    return {
-        "message": "JAX Text Classifier API is running!",
-        "model": "JAX Neural Network",
-        "endpoints": {
-            "predict": "/predict (POST)",
-            "docs": "/docs"
-        }
-    }
-
 if __name__ == "__main__":
     import uvicorn
-    logger.info("[INFO] Starting JAX FastAPI server...")
+    logger.info("[INFO] Starting Unified FastAPI server...")
     uvicorn.run(app, host="0.0.0.0", port=8000)

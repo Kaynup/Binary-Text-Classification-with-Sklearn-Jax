@@ -63,3 +63,44 @@
 2025-12-28 15:07:21,270 - INFO - Unable to initialize backend 'tpu': INTERNAL: Failed to open libtpu.so: libtpu.so: cannot open shared object file: No such file or directory
 2025-12-28 15:07:21,270 - WARNING - An NVIDIA GPU may be present on this machine, but a CUDA-enabled jaxlib is not installed. Falling back to cpu.
 2025-12-28 15:07:21,855 - INFO - Text: 'Happy...' | Sentiment: POSITIVE | Time: 618.12 ms
+2026-01-17 18:29:13,518 - INFO - [LOG] JAX Model loaded: pooling-300 from /home/legionlinux/miniconda3/envs/jaxenv/__INIT__/Binary-Text-Classification-with-Sklearn-Jax/backend/../models/jax/bag_of_words-with_pooling/pooling_batch-300_pipeline.joblib
+2026-01-17 18:29:13,954 - INFO - [LOG] JAX Model loaded: pooling-200-h256 from /home/legionlinux/miniconda3/envs/jaxenv/__INIT__/Binary-Text-Classification-with-Sklearn-Jax/backend/../models/jax/bag_of_words-with_pooling/pooling_batch-200-hidden=256_pipeline.joblib
+2026-01-17 18:29:14,426 - INFO - [LOG] JAX Model loaded: pooling-200-2h from /home/legionlinux/miniconda3/envs/jaxenv/__INIT__/Binary-Text-Classification-with-Sklearn-Jax/backend/../models/jax/bag_of_words-with_pooling/pooling_batch-200_2-hidden=256-128_pipeline.joblib
+2026-01-17 18:29:14,426 - INFO - [LOG] All 3 JAX models loaded successfully!
+2026-01-17 18:29:14,452 - INFO - [INFO] Starting JAX FastAPI server...
+2026-01-17 18:29:35,549 - INFO - Unable to initialize backend 'tpu': INTERNAL: Failed to open libtpu.so: libtpu.so: cannot open shared object file: No such file or directory
+2026-01-17 18:29:35,549 - WARNING - An NVIDIA GPU may be present on this machine, but a CUDA-enabled jaxlib is not installed. Falling back to cpu.
+2026-01-17 18:29:35,833 - INFO - Model: pooling-300 | Text: 'I love this product!...' | Sentiment: POSITIVE | Time: 300.08 ms
+2026-01-17 18:29:52,860 - INFO - Model: pooling-300 | Text: 'This is amazing!...' | Sentiment: POSITIVE | Time: 5.86 ms
+2026-01-17 18:29:52,941 - INFO - Model: pooling-200-h256 | Text: 'This is amazing!...' | Sentiment: POSITIVE | Time: 73.04 ms
+2026-01-17 18:29:53,030 - INFO - Model: pooling-200-2h | Text: 'This is amazing!...' | Sentiment: POSITIVE | Time: 7.49 ms
+2026-01-17 18:29:59,671 - INFO - Model: pooling-200-2h | Text: 'This is amazing!...' | Sentiment: POSITIVE | Time: 9.93 ms
+2026-01-17 18:30:01,214 - INFO - Model: pooling-200-2h | Text: 'This is amazing!...' | Sentiment: POSITIVE | Time: 7.56 ms
+2026-01-17 18:45:54,439 - INFO - [LOG] Loaded sklearn model: sklearn-logreg
+2026-01-17 18:45:54,857 - INFO - [LOG] Loaded JAX model: jax-pooling-300
+2026-01-17 18:45:55,316 - INFO - [LOG] Loaded JAX model: jax-pooling-200-h256
+2026-01-17 18:45:55,717 - INFO - [LOG] Loaded JAX model: jax-pooling-200-2h
+2026-01-17 18:45:55,717 - INFO - [LOG] Total models loaded: 4
+2026-01-17 18:45:55,742 - INFO - [INFO] Starting Unified FastAPI server...
+2026-01-17 18:47:13,902 - INFO - Unable to initialize backend 'tpu': INTERNAL: Failed to open libtpu.so: libtpu.so: cannot open shared object file: No such file or directory
+2026-01-17 18:47:13,902 - WARNING - An NVIDIA GPU may be present on this machine, but a CUDA-enabled jaxlib is not installed. Falling back to cpu.
+2026-01-17 18:47:14,354 - INFO - Model: jax-pooling-200-h256 | Text: 'I been a long day, without you my friend...' | Sentiment: NEGATIVE | Time: 480.26 ms
+2026-01-17 18:47:19,071 - INFO - Model: sklearn-logreg | Text: 'I been a long day, without you my friend...' | Sentiment: NEGATIVE | Time: 9.73 ms
+2026-01-17 18:47:21,928 - INFO - Model: jax-pooling-300 | Text: 'I been a long day, without you my friend...' | Sentiment: NEGATIVE | Time: 89.53 ms
+2026-01-17 18:47:24,202 - INFO - Model: jax-pooling-200-2h | Text: 'I been a long day, without you my friend...' | Sentiment: NEGATIVE | Time: 10.55 ms
+2026-01-17 18:58:25,365 - INFO - Model: jax-pooling-300 | Text: 'Happy...' | Sentiment: POSITIVE | Time: 13.82 ms
+2026-01-17 18:58:30,849 - INFO - Model: sklearn-logreg | Text: 'Happy...' | Sentiment: POSITIVE | Time: 2.04 ms
+2026-01-17 19:03:42,792 - INFO - Model: sklearn-logreg | Text: 'Happy...' | Sentiment: POSITIVE | Time: 2.1 ms
+2026-01-17 19:09:46,251 - INFO - Model: sklearn-logreg | Text: 'Happy...' | Sentiment: POSITIVE | Time: 2.08 ms
+2026-01-17 19:18:47,683 - INFO - [LOG] Loaded sklearn model: sklearn-logreg
+2026-01-17 19:18:48,126 - INFO - [LOG] Loaded JAX model: jax-pooling-300
+2026-01-17 19:18:48,587 - INFO - [LOG] Loaded JAX model: jax-pooling-200-h256
+2026-01-17 19:18:49,028 - INFO - [LOG] Loaded JAX model: jax-pooling-200-2h
+2026-01-17 19:18:49,028 - INFO - [LOG] Total models loaded: 4
+2026-01-17 19:18:49,069 - INFO - [INFO] Starting Unified FastAPI server...
+2026-01-17 19:19:48,743 - INFO - Model: sklearn-logreg | Text: 'happy...' | Sentiment: POSITIVE | Time: 7.98 ms
+2026-01-17 19:19:59,601 - INFO - Unable to initialize backend 'tpu': INTERNAL: Failed to open libtpu.so: libtpu.so: cannot open shared object file: No such file or directory
+2026-01-17 19:19:59,601 - WARNING - An NVIDIA GPU may be present on this machine, but a CUDA-enabled jaxlib is not installed. Falling back to cpu.
+2026-01-17 19:20:00,107 - INFO - Model: jax-pooling-300 | Text: 'happy...' | Sentiment: POSITIVE | Time: 558.38 ms
+2026-01-17 19:47:27,361 - INFO - Model: jax-pooling-300 | Text: 'happy...' | Sentiment: POSITIVE | Time: 21.94 ms
+2026-01-17 19:47:32,475 - INFO - Model: sklearn-logreg | Text: 'happy...' | Sentiment: POSITIVE | Time: 2.9 ms

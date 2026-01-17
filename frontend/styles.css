@@ -78,12 +78,16 @@ body {
 }
 
 @keyframes float {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: translate(0, 0) scale(1);
   }
+
   33% {
     transform: translate(100px, -100px) scale(1.1);
   }
+
   66% {
     transform: translate(-100px, 100px) scale(0.9);
   }
@@ -127,8 +131,15 @@ body {
 }
 
 @keyframes rotate3d {
-  0%, 100% { transform: rotateY(0deg); }
-  50% { transform: rotateY(180deg); }
+
+  0%,
+  100% {
+    transform: rotateY(0deg);
+  }
+
+  50% {
+    transform: rotateY(180deg);
+  }
 }
 
 .subtitle {
@@ -146,8 +157,8 @@ body {
   border-radius: 30px;
   padding: 50px;
   box-shadow: 0 25px 80px rgba(0, 0, 0, 0.4),
-              0 0 0 1px var(--glass-border),
-              inset 0 0 60px rgba(99, 102, 241, 0.05);
+    0 0 0 1px var(--glass-border),
+    inset 0 0 60px rgba(99, 102, 241, 0.05);
   animation: fadeInUp 1s ease-out;
   border: 1px solid rgba(255, 255, 255, 0.05);
 }
@@ -182,7 +193,7 @@ body {
   position: relative;
   margin: 0 auto;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3),
-              inset 0 -5px 20px rgba(0, 0, 0, 0.2);
+    inset 0 -5px 20px rgba(0, 0, 0, 0.2);
   border: 2px solid rgba(148, 163, 184, 0.2);
 }
 
@@ -211,8 +222,15 @@ body {
 }
 
 @keyframes antennaPulse {
-  0%, 100% { transform: translateX(-50%) scale(1); }
-  50% { transform: translateX(-50%) scale(1.2); }
+
+  0%,
+  100% {
+    transform: translateX(-50%) scale(1);
+  }
+
+  50% {
+    transform: translateX(-50%) scale(1.2);
+  }
 }
 
 .happy-glow {
@@ -247,13 +265,21 @@ body {
   border-radius: 8px;
   position: relative;
   box-shadow: 0 0 20px var(--primary),
-              inset 0 2px 10px rgba(255, 255, 255, 0.3);
+    inset 0 2px 10px rgba(255, 255, 255, 0.3);
   animation: blink 4s infinite;
 }
 
 @keyframes blink {
-  0%, 95%, 100% { height: 30px; }
-  97.5% { height: 4px; }
+
+  0%,
+  95%,
+  100% {
+    height: 30px;
+  }
+
+  97.5% {
+    height: 4px;
+  }
 }
 
 .eye-shine {
@@ -273,8 +299,16 @@ body {
 }
 
 @keyframes happyBlink {
-  0%, 95%, 100% { transform: scale(1) rotate(0deg); }
-  50% { transform: scale(1.1) rotate(5deg); }
+
+  0%,
+  95%,
+  100% {
+    transform: scale(1) rotate(0deg);
+  }
+
+  50% {
+    transform: scale(1.1) rotate(5deg);
+  }
 }
 
 .sad-eye {
@@ -296,9 +330,19 @@ body {
 }
 
 @keyframes tearDrop {
-  0% { bottom: -15px; opacity: 0; }
-  50% { opacity: 1; }
-  100% { bottom: -40px; opacity: 0; }
+  0% {
+    bottom: -15px;
+    opacity: 0;
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  100% {
+    bottom: -40px;
+    opacity: 0;
+  }
 }
 
 /* Robot Mouth */
@@ -332,8 +376,13 @@ body {
 }
 
 @keyframes smileGrow {
-  0% { transform: scaleY(0); }
-  100% { transform: scaleY(1); }
+  0% {
+    transform: scaleY(0);
+  }
+
+  100% {
+    transform: scaleY(1);
+  }
 }
 
 .sad-mouth {
@@ -366,12 +415,24 @@ body {
   animation: blush 1s ease-in-out infinite;
 }
 
-.cheek.left { left: 10px; }
-.cheek.right { right: 10px; }
+.cheek.left {
+  left: 10px;
+}
+
+.cheek.right {
+  right: 10px;
+}
 
 @keyframes blush {
-  0%, 100% { opacity: 0.3; }
-  50% { opacity: 0.6; }
+
+  0%,
+  100% {
+    opacity: 0.3;
+  }
+
+  50% {
+    opacity: 0.6;
+  }
 }
 
 /* Robot Body */
@@ -383,7 +444,7 @@ body {
   margin: 15px auto 0;
   position: relative;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3),
-              inset 0 -5px 15px rgba(0, 0, 0, 0.2);
+    inset 0 -5px 15px rgba(0, 0, 0, 0.2);
   border: 2px solid rgba(148, 163, 184, 0.2);
 }
 
@@ -401,8 +462,15 @@ body {
 }
 
 @keyframes bodyPulse {
-  0%, 100% { opacity: 0.6; }
-  50% { opacity: 1; }
+
+  0%,
+  100% {
+    opacity: 0.6;
+  }
+
+  50% {
+    opacity: 1;
+  }
 }
 
 .happy-light {
@@ -445,8 +513,15 @@ body {
 }
 
 @keyframes panelBlink {
-  0%, 100% { opacity: 0.3; }
-  50% { opacity: 1; }
+
+  0%,
+  100% {
+    opacity: 0.3;
+  }
+
+  50% {
+    opacity: 1;
+  }
 }
 
 /* Heart Burst for Happy */
@@ -483,9 +558,11 @@ body {
     transform: translateY(0) scale(0);
     opacity: 0;
   }
+
   50% {
     opacity: 1;
   }
+
   100% {
     transform: translateY(-60px) scale(1);
     opacity: 0;
@@ -528,9 +605,11 @@ body {
     transform: translateY(-10px);
     opacity: 0;
   }
+
   50% {
     opacity: 1;
   }
+
   100% {
     transform: translateY(100px);
     opacity: 0;
@@ -563,8 +642,17 @@ body {
 }
 
 @keyframes glowPulse {
-  0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.6; }
-  50% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
+
+  0%,
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.6;
+  }
+
+  50% {
+    transform: translate(-50%, -50%) scale(1.1);
+    opacity: 1;
+  }
 }
 
 .character-message {
@@ -573,6 +661,235 @@ body {
   font-weight: 500;
   transition: all 0.4s ease;
   min-height: 30px;
+}
+
+/* Bookmark Model Selector - Right side of Robot Head */
+.character-container {
+  position: relative;
+}
+
+.model-bookmark {
+  position: absolute;
+  top: 50px;
+  left: calc(50% + 75px);
+  z-index: 10;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+}
+
+.bookmark-tab {
+  width: 45px;
+  height: 45px;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  box-shadow: 0 5px 15px rgba(99, 102, 241, 0.4);
+  z-index: 5;
+}
+
+.bookmark-tab:hover {
+  transform: scale(1.1);
+  box-shadow: 0 8px 25px rgba(99, 102, 241, 0.5);
+}
+
+.bookmark-icon {
+  font-size: 1.4rem;
+  color: white;
+  transition: transform 0.3s ease;
+}
+
+.bookmark-tab:hover .bookmark-icon {
+  transform: rotate(90deg);
+}
+
+.model-bookmark.expanded .bookmark-tab {
+  border-radius: 12px 12px 0 0;
+}
+
+.model-bookmark.expanded .bookmark-icon {
+  transform: rotate(180deg);
+}
+
+.bookmark-dropdown {
+  position: absolute;
+  top: 45px;
+  left: 0;
+  width: 200px;
+  padding: 15px;
+  background: rgba(30, 41, 59, 0.95);
+  backdrop-filter: blur(15px);
+  border-radius: 0 12px 12px 12px;
+  border: 2px solid rgba(99, 102, 241, 0.3);
+  border-top: none;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px) scaleY(0);
+  transform-origin: top left;
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.model-bookmark.expanded .bookmark-dropdown {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0) scaleY(1);
+}
+
+.bookmark-dropdown label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.model-dropdown {
+  padding: 12px 20px;
+  width: 100%;
+  background: rgba(15, 23, 42, 0.8);
+  border: 2px solid rgba(99, 102, 241, 0.3);
+  border-radius: 12px;
+  color: var(--text-light);
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%2394a3b8' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10l-5 5z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 15px center;
+  padding-right: 40px;
+}
+
+.model-dropdown:hover {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.model-dropdown:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.2),
+    0 5px 20px rgba(99, 102, 241, 0.2);
+}
+
+.model-dropdown option {
+  background: var(--bg-dark);
+  color: var(--text-light);
+  padding: 10px;
+}
+
+/* Robot Tattoo Decorations */
+.robot-tattoo {
+  position: absolute;
+  width: 8px;
+  height: 40px;
+  border-radius: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  box-shadow: 0 0 10px currentColor;
+}
+
+.tattoo-left {
+  left: 8px;
+  background: linear-gradient(180deg, var(--primary), var(--secondary));
+}
+
+.tattoo-right {
+  right: 8px;
+  background: linear-gradient(180deg, var(--primary), var(--secondary));
+}
+
+/* JAX Model Tattoo Colors - Cyan/Purple techno look */
+.robot.jax-model .tattoo-left,
+.robot.jax-model .tattoo-right {
+  background: linear-gradient(180deg, #06b6d4, #a855f7);
+  box-shadow: 0 0 15px #06b6d4, 0 0 25px #a855f7;
+  animation: jaxGlow 2s infinite alternate;
+}
+
+@keyframes jaxGlow {
+  0% {
+    box-shadow: 0 0 10px #06b6d4, 0 0 20px #a855f7;
+    filter: brightness(1);
+  }
+
+  100% {
+    box-shadow: 0 0 20px #06b6d4, 0 0 35px #a855f7;
+    filter: brightness(1.2);
+  }
+}
+
+/* Sklearn Model Tattoo Colors - Orange/Gold classic look */
+.robot.sklearn-model .tattoo-left,
+.robot.sklearn-model .tattoo-right {
+  background: linear-gradient(180deg, #f97316, #eab308);
+  box-shadow: 0 0 15px #f97316, 0 0 25px #eab308;
+  animation: sklearnGlow 2s infinite alternate;
+}
+
+@keyframes sklearnGlow {
+  0% {
+    box-shadow: 0 0 10px #f97316, 0 0 20px #eab308;
+    filter: brightness(1);
+  }
+
+  100% {
+    box-shadow: 0 0 20px #f97316, 0 0 35px #eab308;
+    filter: brightness(1.2);
+  }
+}
+
+/* Body Tattoo Stripe */
+.body-tattoo {
+  position: absolute;
+  top: 50px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 6px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--primary), var(--secondary));
+  transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  box-shadow: 0 0 10px currentColor;
+}
+
+.robot.jax-model .body-tattoo {
+  background: linear-gradient(90deg, #06b6d4, #a855f7);
+  box-shadow: 0 0 15px #06b6d4;
+}
+
+.robot.sklearn-model .body-tattoo {
+  background: linear-gradient(90deg, #f97316, #eab308);
+  box-shadow: 0 0 15px #f97316;
+}
+
+/* Antenna changes based on model */
+.robot.jax-model .antenna {
+  background: #06b6d4;
+}
+
+.robot.jax-model .antenna-ball {
+  background: #06b6d4;
+  box-shadow: 0 0 20px #06b6d4;
+}
+
+.robot.sklearn-model .antenna {
+  background: #f97316;
+}
+
+.robot.sklearn-model .antenna-ball {
+  background: #f97316;
+  box-shadow: 0 0 20px #f97316;
 }
 
 /* Input Section */
@@ -604,7 +921,7 @@ textarea:focus {
   outline: none;
   border-color: var(--primary);
   box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1),
-              0 10px 40px rgba(99, 102, 241, 0.2);
+    0 10px 40px rgba(99, 102, 241, 0.2);
   background: rgba(30, 41, 59, 0.6);
 }
 
@@ -672,6 +989,7 @@ textarea::placeholder {
     transform: scale(0);
     opacity: 1;
   }
+
   100% {
     transform: scale(4);
     opacity: 0;
@@ -690,8 +1008,15 @@ textarea::placeholder {
 }
 
 @keyframes iconPulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.2); }
+
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.2);
+  }
 }
 
 /* Results Section */
@@ -743,9 +1068,17 @@ textarea::placeholder {
 }
 
 @keyframes badgePop {
-  0% { transform: scale(0); }
-  60% { transform: scale(1.1); }
-  100% { transform: scale(1); }
+  0% {
+    transform: scale(0);
+  }
+
+  60% {
+    transform: scale(1.1);
+  }
+
+  100% {
+    transform: scale(1);
+  }
 }
 
 .result-badge.positive {
@@ -764,6 +1097,32 @@ textarea::placeholder {
   font-size: 1.1rem;
   margin-bottom: 20px;
   line-height: 1.7;
+}
+
+/* Info Icon Styles */
+.info-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  cursor: help;
+  margin-left: 8px;
+  opacity: 0.7;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.info-icon:hover {
+  color: var(--primary);
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+.delay-label {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  opacity: 0.8;
 }
 
 .result-meta {
@@ -979,18 +1338,25 @@ textarea::placeholder {
 }
 
 @keyframes loadingBounce {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: translateY(0);
   }
+
   50% {
     transform: translateY(-20px);
   }
 }
 
 @keyframes loadingBlink {
-  0%, 90%, 100% {
+
+  0%,
+  90%,
+  100% {
     opacity: 1;
   }
+
   95% {
     opacity: 0;
   }
@@ -1004,9 +1370,12 @@ textarea::placeholder {
 }
 
 @keyframes loadingPulse {
-  0%, 100% {
+
+  0%,
+  100% {
     opacity: 0.5;
   }
+
   50% {
     opacity: 1;
   }
@@ -1037,6 +1406,7 @@ textarea::placeholder {
     opacity: 0;
     transform: translateY(-40px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -1048,6 +1418,7 @@ textarea::placeholder {
     opacity: 0;
     transform: translateY(40px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -1059,6 +1430,7 @@ textarea::placeholder {
     opacity: 0;
     transform: translateX(-30px);
   }
+
   to {
     opacity: 1;
     transform: translateX(0);
@@ -1070,56 +1442,56 @@ textarea::placeholder {
   .title {
     font-size: 2.5rem;
   }
-  
+
   .subtitle {
     font-size: 1rem;
   }
-  
+
   .main-content {
     padding: 30px 25px;
   }
-  
+
   .character {
     width: 200px;
     height: 230px;
   }
-  
+
   .robot-head {
     width: 110px;
     height: 110px;
   }
-  
+
   .robot-eye {
     width: 24px;
     height: 24px;
   }
-  
+
   .robot-body {
     width: 100px;
     height: 80px;
   }
-  
+
   textarea {
     padding: 20px;
     font-size: 1rem;
   }
-  
+
   .predict-btn {
     padding: 18px;
     font-size: 1rem;
   }
-  
+
   .result-meta {
     flex-direction: column;
     gap: 15px;
   }
-  
+
   .history-header {
     flex-direction: column;
     gap: 15px;
     align-items: flex-start;
   }
-  
+
   .clear-btn {
     width: 100%;
   }
