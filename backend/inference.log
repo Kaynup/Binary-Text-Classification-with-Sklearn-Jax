@@ -104,3 +104,13 @@
 2026-01-17 19:20:00,107 - INFO - Model: jax-pooling-300 | Text: 'happy...' | Sentiment: POSITIVE | Time: 558.38 ms
 2026-01-17 19:47:27,361 - INFO - Model: jax-pooling-300 | Text: 'happy...' | Sentiment: POSITIVE | Time: 21.94 ms
 2026-01-17 19:47:32,475 - INFO - Model: sklearn-logreg | Text: 'happy...' | Sentiment: POSITIVE | Time: 2.9 ms
+2026-02-19 04:17:29,931 - INFO - [LOG] Loaded sklearn model: sklearn-logreg
+2026-02-19 04:17:30,381 - INFO - [LOG] Loaded JAX model: jax-pooling-300
+2026-02-19 04:17:30,950 - INFO - [LOG] Loaded JAX model: jax-pooling-200-h256
+2026-02-19 04:17:31,519 - INFO - [LOG] Loaded JAX model: jax-pooling-200-2h
+2026-02-19 04:17:31,519 - INFO - [LOG] Total models loaded: 4
+2026-02-19 04:17:31,559 - INFO - [INFO] Starting Unified FastAPI server...
+2026-02-19 04:19:40,504 - INFO - Model: sklearn-logreg | Text: 'I like apples...' | Sentiment: POSITIVE | Time: 12.15 ms
+2026-02-19 04:19:59,682 - INFO - Unable to initialize backend 'tpu': INTERNAL: Failed to open libtpu.so: libtpu.so: cannot open shared object file: No such file or directory
+2026-02-19 04:19:59,683 - WARNING - An NVIDIA GPU may be present on this machine, but a CUDA-enabled jaxlib is not installed. Falling back to cpu.
+2026-02-19 04:20:00,355 - INFO - Model: jax-pooling-200-2h | Text: 'I like apples...' | Sentiment: POSITIVE | Time: 730.86 ms
