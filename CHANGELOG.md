@@ -46,7 +46,7 @@ All notable changes to the Binary Sentiment Classification project will be docum
 
 #### 6. Production Railway & Vercel Deployment
 - **Free Railway Backend**: Optimized lightweight `Dockerfile` (Python 3.10-slim), `railway.json` with health check, and `Procfile`.
-- **Vercel Frontend**: Synchronized static hosting configuration in `deployment-vercel/frontend/` and `frontend/`.
+- **Vercel Frontend**: Streamlined static hosting configuration in `frontend/` with root `vercel.json` and strict security headers.
 - **In-Memory Rate Limiting**: Enforced sliding-window limits (default: 60 req/min for predict, 120 req/min general) returning HTTP 429 with `Retry-After`.
 
 #### 7. Frontend Redesign & Security Hardening

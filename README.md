@@ -201,7 +201,7 @@ git lfs untrack "*.pkl" "*.npz" "*.csv" "*.joblib" 2>/dev/null || true
 
 # 3. Stage clean configuration and code
 git add .gitattributes .gitignore Makefile README.md CHANGELOG.md requirements.txt requirements-dev.txt
-git add backend/ src/ scripts/ tests/ frontend/ deployment-vercel/ monitoring/ .github/ utils.py
+git add backend/ src/ scripts/ tests/ frontend/ monitoring/ .github/ utils.py
 
 # 4. Stage the lightweight 3.8MB model
 git add models/sklearn/logreg-80k.joblib
