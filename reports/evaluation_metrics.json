@@ -1,0 +1,32 @@
+{
+  "sample_count": 3000,
+  "class_distribution": {
+    "negative_samples": 1505,
+    "positive_samples": 1495,
+    "positive_ratio": 0.4983
+  },
+  "accuracy": 0.8407,
+  "precision": 0.83,
+  "recall_sensitivity": 0.8555,
+  "specificity": 0.8259,
+  "f1_score": 0.8426,
+  "balanced_accuracy": 0.8407,
+  "matthews_corrcoef": 0.6817,
+  "confusion_matrix": {
+    "true_negative": 1243,
+    "false_positive": 262,
+    "false_negative": 216,
+    "true_positive": 1279
+  },
+  "roc_auc": 0.9139,
+  "pr_auc": 0.9079,
+  "log_loss": 0.3803,
+  "latency_benchmarks": {
+    "batch_size": 10,
+    "mean_batch_ms": 0.377,
+    "p50_item_ms": 0.035,
+    "p95_item_ms": 0.047,
+    "p99_item_ms": 0.068,
+    "throughput_inferences_per_sec": 26533.3
+  }
+}

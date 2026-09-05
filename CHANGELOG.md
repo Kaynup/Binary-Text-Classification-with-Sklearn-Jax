@@ -54,6 +54,12 @@ All notable changes to the Binary Sentiment Classification project will be docum
 - **Character Animation Intact**: Preserved interactive robot emotion states (Neutral, Happy with heart bursts/blushing cheeks, Sad with tears/rain).
 - **100% XSS Prevention**: Eliminated dangerous `innerHTML` string interpolation; all user input rendered safely via dedicated `escapeHtml` and `.textContent`.
 - **Content Security Policy (CSP)**: Added strict meta tag and `vercel.json` headers.
+- **Tactile UI Refinements**:
+  - Live dual counters (word count + character limit) with reactive input feedback.
+  - Live engine connectivity badge with automated 30s `/health` heartbeat polling.
+  - Calculated continuous polarity index (-1.00 to +1.00) with categorical intensity descriptors.
+  - 1-click clipboard result export with floating toast feedback.
+  - Cleaned up obsolete legacy JAX screenshot assets from `src/images/`.
 
 #### 8. Observability & Monitoring
 - Built Prometheus metrics exposition at `/metrics` tracking request counts, response latency histograms, sentiment distribution, and active connections.

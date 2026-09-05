@@ -15,23 +15,27 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <!-- Clean Subtle Background Structure (Zero neon orbs or fuzzy blurs) -->
+  <!-- Clean Subtle Background Structure -->
   <div class="matte-bg">
     <div class="grid-overlay"></div>
   </div>
 
   <div class="container">
-    <!-- Top Bar with Version & Research Badge -->
+    <!-- Top Bar with Status, Version & Research Badge -->
     <div class="top-bar">
       <div class="brand-pill">
-        <span class="status-indicator"></span>
+        <span class="status-indicator" id="status-indicator"></span>
         <span class="brand-name">Sentiment Engine</span>
         <span class="version-tag">v2.0.0</span>
       </div>
       <div class="top-actions">
+        <span class="api-status-badge" id="api-status-badge" title="Live Backend Status">
+          <span class="status-dot online"></span>
+          <span id="api-status-text">Connecting...</span>
+        </span>
         <button class="benchmark-toggle-btn" id="benchmark-toggle-btn" onclick="toggleBenchmarksModal()">
           <span class="bench-icon">📊</span>
-          <span>Research Benchmarks</span>
+          <span>Benchmarks</span>
         </button>
       </div>
     </div>
@@ -172,11 +176,16 @@
             maxlength="2000"
           ></textarea>
           <div class="input-footer">
-            <button class="text-action-btn" id="clear-input-btn" onclick="clearInput()" title="Clear text">
-              Clear
-            </button>
-            <div class="char-counter">
-              <span id="char-count">0</span> / 2000
+            <div class="footer-left">
+              <button class="text-action-btn" id="clear-input-btn" onclick="clearInput()" title="Clear text">
+                Clear
+              </button>
+              <span class="kbd-hint"><kbd>Ctrl</kbd>+<kbd>↵</kbd></span>
+            </div>
+            <div class="counters-group">
+              <span class="words-counter" id="words-count">0 words</span>
+              <span class="counter-divider">•</span>
+              <span class="char-counter"><span id="char-count">0</span> / 2000</span>
             </div>
           </div>
         </div>
@@ -194,11 +203,17 @@
         <div class="result-card" id="result-card">
           <div class="result-header">
             <div class="result-title-group">
-              <span class="result-label">Sentiment Classification</span>
+              <span class="result-label">Sentiment Result</span>
               <span class="result-badge" id="result-badge"></span>
             </div>
-            <div class="confidence-pill" id="confidence-pill">
-              <span id="confidence-val">--%</span> confidence
+            <div class="header-actions">
+              <div class="confidence-pill" id="confidence-pill">
+                <span id="confidence-val">--%</span> confidence
+              </div>
+              <button class="copy-result-btn" id="copy-result-btn" onclick="copyResultToClipboard()" title="Copy sentiment summary">
+                <span id="copy-btn-icon">📋</span>
+                <span id="copy-btn-text">Copy</span>
+              </button>
             </div>
           </div>
 
@@ -209,10 +224,11 @@
               <p class="result-text" id="result-text"></p>
             </div>
 
-            <!-- Probability Bars -->
+            <!-- Probability Bars & Polarity -->
             <div class="prob-distribution">
               <div class="prob-bar-label">
                 <span>Positive: <strong id="pos-prob-val">--%</strong></span>
+                <span class="polarity-tag" id="polarity-tag">Polarity: +0.00</span>
                 <span>Negative: <strong id="neg-prob-val">--%</strong></span>
               </div>
               <div class="prob-bar-track">
@@ -298,43 +314,53 @@
             <tbody>
               <tr>
                 <td><strong>F1-Score</strong></td>
-                <td><span class="score-badge">82.37%</span></td>
+                <td><span class="score-badge">84.26%</span></td>
                 <td>Test partition harmonic mean</td>
               </tr>
               <tr>
                 <td><strong>Accuracy</strong></td>
-                <td><span class="score-badge">82.36%</span></td>
+                <td><span class="score-badge">84.07%</span></td>
                 <td>Overall test set accuracy</td>
               </tr>
               <tr>
                 <td><strong>ROC-AUC</strong></td>
-                <td><span class="score-badge">0.9022</span></td>
+                <td><span class="score-badge">0.9139</span></td>
                 <td>Area under ROC curve</td>
               </tr>
               <tr>
+                <td><strong>PR-AUC</strong></td>
+                <td><span class="score-badge">0.9079</span></td>
+                <td>Area under Precision-Recall curve</td>
+              </tr>
+              <tr>
                 <td><strong>Precision</strong></td>
-                <td><span class="score-badge">81.85%</span></td>
+                <td><span class="score-badge">83.00%</span></td>
                 <td>Positive predictive value</td>
               </tr>
               <tr>
                 <td><strong>Recall / Sensitivity</strong></td>
-                <td><span class="score-badge">82.90%</span></td>
+                <td><span class="score-badge">85.55%</span></td>
                 <td>True positive discovery rate</td>
               </tr>
               <tr>
                 <td><strong>Specificity</strong></td>
-                <td><span class="score-badge">81.83%</span></td>
+                <td><span class="score-badge">82.59%</span></td>
                 <td>True negative discovery rate</td>
               </tr>
               <tr>
                 <td><strong>Matthews Correlation (MCC)</strong></td>
-                <td><span class="score-badge">0.6473</span></td>
+                <td><span class="score-badge">0.6815</span></td>
                 <td>Balanced binary correlation</td>
               </tr>
               <tr>
-                <td><strong>P95 Inference Latency</strong></td>
-                <td><span class="score-badge">3.85 ms</span></td>
+                <td><strong>P50 Inference Latency</strong></td>
+                <td><span class="score-badge">0.035 ms</span></td>
                 <td>Pure CPU single-item benchmark</td>
+              </tr>
+              <tr>
+                <td><strong>Throughput</strong></td>
+                <td><span class="score-badge">&gt;26,000/s</span></td>
+                <td>CPU inferences per second</td>
               </tr>
             </tbody>
           </table>
@@ -344,6 +370,9 @@
         </div>
       </div>
     </div>
+
+    <!-- Toast Notification -->
+    <div class="toast-notification" id="toast-notification" style="display: none;"></div>
 
     <!-- Footer -->
     <footer class="footer">

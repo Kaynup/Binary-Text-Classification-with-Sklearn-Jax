@@ -1,7 +1,7 @@
 /**
  * Sentiment Analyzer Frontend Application (v2.0.0)
  * Hardened with complete XSS prevention, tactile state management,
- * and robust error handling.
+ * live word/char counters, backend health monitoring, and clipboard integration.
  */
 
 // Application State
@@ -13,6 +13,7 @@ let stats = {
     totalTime: 0
 };
 const MAX_HISTORY = 30;
+let currentResultSummary = null;
 
 // ============================================================================
 // Security & XSS Prevention
@@ -33,24 +34,27 @@ function escapeHtml(text) {
 }
 
 // ============================================================================
-// Initialization
+// Initialization & Event Listeners
 // ============================================================================
 
 document.addEventListener('DOMContentLoaded', () => {
     loadHistory();
     loadStats();
     setupEventListeners();
+    updateCounters();
     setRobotState('neutral', 'Ready to analyze your sentiment...');
+    
+    // Check live backend connectivity immediately and periodically
+    checkBackendHealth();
+    setInterval(checkBackendHealth, 30000);
 });
 
 function setupEventListeners() {
     const textInput = document.getElementById('text-input');
-    const charCount = document.getElementById('char-count');
+    if (!textInput) return;
 
-    // Live character counter
-    textInput.addEventListener('input', () => {
-        charCount.textContent = textInput.value.length;
-    });
+    // Live word & character counters
+    textInput.addEventListener('input', updateCounters);
 
     // Ctrl+Enter or Cmd+Enter submits
     textInput.addEventListener('keydown', (e) => {
@@ -61,26 +65,93 @@ function setupEventListeners() {
     });
 }
 
+function updateCounters() {
+    const textInput = document.getElementById('text-input');
+    const charCount = document.getElementById('char-count');
+    const wordsCount = document.getElementById('words-count');
+    if (!textInput) return;
+
+    const text = textInput.value;
+    if (charCount) {
+        charCount.textContent = text.length;
+    }
+
+    if (wordsCount) {
+        const trimmed = text.trim();
+        const words = trimmed.length === 0 ? 0 : trimmed.split(/\s+/).length;
+        wordsCount.textContent = `${words} word${words === 1 ? '' : 's'}`;
+    }
+}
+
+// ============================================================================
+// Backend Connectivity & Health Check
+// ============================================================================
+
+async function checkBackendHealth() {
+    const statusDot = document.querySelector('#api-status-badge .status-dot');
+    const statusText = document.getElementById('api-status-text');
+
+    const apiUrl = (window.APP_CONFIG && window.APP_CONFIG.API_URL)
+        ? window.APP_CONFIG.API_URL
+        : 'http://127.0.0.1:8000/predict';
+    const healthUrl = apiUrl.replace(/\/predict\/?$/, '/health');
+
+    try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 4000);
+
+        const res = await fetch(healthUrl, { 
+            method: 'GET',
+            signal: controller.signal
+        });
+        clearTimeout(timeoutId);
+
+        if (res.ok) {
+            const data = await res.json();
+            if (data.status === 'healthy') {
+                if (statusDot) {
+                    statusDot.className = 'status-dot online';
+                }
+                if (statusText) {
+                    statusText.textContent = 'Engine Online';
+                }
+                return;
+            }
+        }
+        throw new Error('Unhealthy status');
+    } catch (e) {
+        if (statusDot) {
+            statusDot.className = 'status-dot offline';
+        }
+        if (statusText) {
+            statusText.textContent = 'Engine Offline';
+        }
+    }
+}
+
 // ============================================================================
 // UI Interactions & Example Prompts
 // ============================================================================
 
 function setExampleText(text) {
     const textInput = document.getElementById('text-input');
+    if (!textInput) return;
     textInput.value = text;
-    document.getElementById('char-count').textContent = text.length;
+    updateCounters();
     textInput.focus();
 }
 
 function clearInput() {
     const textInput = document.getElementById('text-input');
+    if (!textInput) return;
     textInput.value = '';
-    document.getElementById('char-count').textContent = '0';
+    updateCounters();
     textInput.focus();
 }
 
 function toggleBenchmarksModal() {
     const modal = document.getElementById('benchmarks-modal');
+    if (!modal) return;
     const isVisible = modal.style.display === 'flex';
     modal.style.display = isVisible ? 'none' : 'flex';
 }
@@ -89,6 +160,50 @@ function closeBenchmarksOnBackdrop(e) {
     if (e.target.id === 'benchmarks-modal') {
         toggleBenchmarksModal();
     }
+}
+
+// ============================================================================
+// Clipboard & Toast Notification
+// ============================================================================
+
+function copyResultToClipboard() {
+    if (!currentResultSummary) {
+        showToast('No result available to copy');
+        return;
+    }
+
+    navigator.clipboard.writeText(currentResultSummary).then(() => {
+        const copyIcon = document.getElementById('copy-btn-icon');
+        const copyText = document.getElementById('copy-btn-text');
+        if (copyIcon && copyText) {
+            copyIcon.textContent = '✓';
+            copyText.textContent = 'Copied!';
+            setTimeout(() => {
+                copyIcon.textContent = '📋';
+                copyText.textContent = 'Copy';
+            }, 2000);
+        }
+        showToast('Summary copied to clipboard!');
+    }).catch(err => {
+        console.error('Clipboard error:', err);
+        showToast('Could not access clipboard');
+    });
+}
+
+function showToast(message) {
+    let toast = document.querySelector('.toast-notification');
+    if (!toast) {
+        toast = document.createElement('div');
+        toast.className = 'toast-notification';
+        document.body.appendChild(toast);
+    }
+    toast.textContent = message;
+    toast.style.display = 'block';
+
+    clearTimeout(toast._timeout);
+    toast._timeout = setTimeout(() => {
+        toast.style.display = 'none';
+    }, 2400);
 }
 
 // ============================================================================
@@ -101,20 +216,19 @@ function setRobotState(state, message) {
     const sadRobot = document.getElementById('sad-robot');
     const msgElem = document.getElementById('character-message');
 
-    // Reset visibility
-    neutralRobot.style.display = 'none';
-    happyRobot.style.display = 'none';
-    sadRobot.style.display = 'none';
+    if (neutralRobot) neutralRobot.style.display = 'none';
+    if (happyRobot) happyRobot.style.display = 'none';
+    if (sadRobot) sadRobot.style.display = 'none';
 
-    if (state === 'positive') {
+    if (state === 'positive' && happyRobot) {
         happyRobot.style.display = 'flex';
-    } else if (state === 'negative') {
+    } else if (state === 'negative' && sadRobot) {
         sadRobot.style.display = 'flex';
-    } else {
+    } else if (neutralRobot) {
         neutralRobot.style.display = 'flex';
     }
 
-    if (message) {
+    if (message && msgElem) {
         msgElem.textContent = message;
     }
 }
@@ -125,11 +239,11 @@ function setRobotState(state, message) {
 
 async function makePrediction() {
     const textInput = document.getElementById('text-input');
-    const text = textInput.value.trim();
+    const text = textInput ? textInput.value.trim() : '';
 
     if (!text) {
         alert('Please enter some text before analyzing.');
-        textInput.focus();
+        if (textInput) textInput.focus();
         return;
     }
 
@@ -138,9 +252,9 @@ async function makePrediction() {
     const btnText = document.getElementById('btn-text');
 
     // Set Loading State
-    predictBtn.disabled = true;
-    btnSpinner.style.display = 'inline-block';
-    btnText.textContent = 'Analyzing...';
+    if (predictBtn) predictBtn.disabled = true;
+    if (btnSpinner) btnSpinner.style.display = 'inline-block';
+    if (btnText) btnText.textContent = 'Analyzing...';
     setRobotState('neutral', 'Processing sentence through TF-IDF vectors...');
 
     // Resolve API URL
@@ -178,14 +292,20 @@ async function makePrediction() {
         updateHistory(data, text);
         updateStats(data);
 
+        // Mark backend as active
+        const statusDot = document.querySelector('#api-status-badge .status-dot');
+        const statusText = document.getElementById('api-status-text');
+        if (statusDot) statusDot.className = 'status-dot online';
+        if (statusText) statusText.textContent = 'Engine Online';
+
     } catch (err) {
         console.error('Inference error:', err);
-        alert(`Prediction failed: ${err.message}\n\nPlease check that the backend is running.`);
+        alert(`Prediction failed: ${err.message}\n\nPlease verify that the backend server is running.`);
         setRobotState('neutral', 'Encountered an issue connecting to the inference engine.');
     } finally {
-        predictBtn.disabled = false;
-        btnSpinner.style.display = 'none';
-        btnText.textContent = 'Analyze Sentiment';
+        if (predictBtn) predictBtn.disabled = false;
+        if (btnSpinner) btnSpinner.style.display = 'none';
+        if (btnText) btnText.textContent = 'Analyze Sentiment';
     }
 }
 
@@ -220,35 +340,70 @@ function displayResults(data, originalText) {
 
     // Card state
     const resultCard = document.getElementById('result-card');
-    resultCard.className = `result-card ${sentimentClass}`;
+    if (resultCard) {
+        resultCard.className = `result-card ${sentimentClass}`;
+    }
 
     // Badge
     const resultBadge = document.getElementById('result-badge');
-    resultBadge.className = `result-badge ${sentimentClass}`;
-    resultBadge.textContent = isPositive ? '😊 Positive' : '😞 Negative';
+    if (resultBadge) {
+        resultBadge.className = `result-badge ${sentimentClass}`;
+        resultBadge.textContent = isPositive ? '😊 Positive' : '😞 Negative';
+    }
 
     // Confidence pill
-    document.getElementById('confidence-val').textContent = `${confidencePct}%`;
+    const confVal = document.getElementById('confidence-val');
+    if (confVal) {
+        confVal.textContent = `${confidencePct}%`;
+    }
 
     // Safe Text Insertion via textContent (Zero XSS Risk)
     const resultText = document.getElementById('result-text');
-    resultText.textContent = `"${originalText}"`;
+    if (resultText) {
+        resultText.textContent = `"${originalText}"`;
+    }
 
-    // Probability Track
-    const posProb = data.probabilities ? Math.round(data.probabilities.positive * 100) : (isPositive ? confidencePct : 100 - confidencePct);
-    const negProb = 100 - posProb;
-    document.getElementById('pos-prob-val').textContent = `${posProb}%`;
-    document.getElementById('neg-prob-val').textContent = `${negProb}%`;
-    document.getElementById('prob-bar-fill').style.width = `${posProb}%`;
+    // Probability & Polarity Calculation
+    const posProbVal = data.probabilities ? Math.round(data.probabilities.positive * 100) : (isPositive ? confidencePct : 100 - confidencePct);
+    const negProbVal = 100 - posProbVal;
+    
+    const posElem = document.getElementById('pos-prob-val');
+    const negElem = document.getElementById('neg-prob-val');
+    const probBar = document.getElementById('prob-bar-fill');
+
+    if (posElem) posElem.textContent = `${posProbVal}%`;
+    if (negElem) negElem.textContent = `${negProbVal}%`;
+    if (probBar) probBar.style.width = `${posProbVal}%`;
+
+    // Polarity metric: ranging from -1.00 to +1.00
+    const polarity = Number(((posProbVal - negProbVal) / 100).toFixed(2));
+    const polaritySign = polarity > 0 ? '+' : '';
+    let polarityDesc = 'Neutral';
+    if (polarity >= 0.5) polarityDesc = 'Strong Positive';
+    else if (polarity > 0.1) polarityDesc = 'Moderate Positive';
+    else if (polarity <= -0.5) polarityDesc = 'Strong Negative';
+    else if (polarity < -0.1) polarityDesc = 'Moderate Negative';
+
+    const polarityTag = document.getElementById('polarity-tag');
+    if (polarityTag) {
+        polarityTag.textContent = `Polarity: ${polaritySign}${polarity.toFixed(2)} (${polarityDesc})`;
+    }
 
     // Meta items
-    document.getElementById('inference-time').textContent = data.inference_time_ms || '2.4';
-    document.getElementById('model-type').textContent = 'Scikit-Learn Logistic Regression (80k features)';
+    const infTimeElem = document.getElementById('inference-time');
+    const modelTypeElem = document.getElementById('model-type');
+    if (infTimeElem) infTimeElem.textContent = data.inference_time_ms || '2.4';
+    if (modelTypeElem) modelTypeElem.textContent = 'Scikit-Learn Logistic Regression (80k features)';
+
+    // Cache summary for clipboard action
+    currentResultSummary = `Sentiment: ${sentimentLabel} (${confidencePct}% confidence)\nPolarity: ${polaritySign}${polarity.toFixed(2)} (${polarityDesc})\nInput: "${originalText}"\nEngine: Scikit-Learn Logistic Regression (v2.0.0)`;
 
     // Show section
     const resultsSection = document.getElementById('results-section');
-    resultsSection.style.display = 'block';
-    resultsSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    if (resultsSection) {
+        resultsSection.style.display = 'block';
+        resultsSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
 }
 
 // ============================================================================
@@ -270,11 +425,18 @@ function updateStats(data) {
 }
 
 function renderStats() {
-    document.getElementById('total-analyses').textContent = stats.total;
-    document.getElementById('positive-count').textContent = stats.positive;
-    document.getElementById('negative-count').textContent = stats.negative;
-    const avg = stats.total > 0 ? (stats.totalTime / stats.total).toFixed(1) : '0';
-    document.getElementById('avg-time').textContent = avg;
+    const totalElem = document.getElementById('total-analyses');
+    const posElem = document.getElementById('positive-count');
+    const negElem = document.getElementById('negative-count');
+    const avgElem = document.getElementById('avg-time');
+
+    if (totalElem) totalElem.textContent = stats.total;
+    if (posElem) posElem.textContent = stats.positive;
+    if (negElem) negElem.textContent = stats.negative;
+    if (avgElem) {
+        const avg = stats.total > 0 ? (stats.totalTime / stats.total).toFixed(1) : '0';
+        avgElem.textContent = avg;
+    }
 }
 
 function updateHistory(data, originalText) {
@@ -300,7 +462,8 @@ function renderHistory() {
     const historyList = document.getElementById('history-list');
     const counter = document.getElementById('history-counter');
 
-    counter.textContent = `(${history.length})`;
+    if (counter) counter.textContent = `(${history.length})`;
+    if (!historyList) return;
 
     if (history.length === 0) {
         historyList.innerHTML = '<p class="empty-state">No analyses yet. Enter text above to inspect sentiment.</p>';
