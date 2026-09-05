@@ -108,7 +108,7 @@ async function checkBackendHealth() {
 
         if (res.ok) {
             const data = await res.json();
-            if (data.status === 'healthy') {
+            if (data.status === 'healthy' || data.status === 'ok') {
                 if (statusDot) {
                     statusDot.className = 'status-dot online';
                 }
