@@ -1,4 +1,4 @@
-# Binary Sentiment Classification with Scikit-Learn (v2.0.0)
+# Pure Scikit-Learn Backend Production Dependencies (v2.0.0)
 fastapi>=0.104.0
 uvicorn[standard]>=0.24.0
 pydantic>=2.0.0

@@ -1,50 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sentiment Analyzer - AI Detector</title>
+  <meta name="description" content="Binary Sentiment Analysis with Scikit-Learn - Fast, interpretable machine learning model with live character feedback.">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' https: http:; script-src 'self' 'unsafe-inline' https:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:;">
+  <title>Sentiment Analyzer v2.0.0 — Pure Scikit-Learn</title>
+  
+  <!-- Modern Clean Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
   <link rel="stylesheet" href="styles.css">
 </head>
-
 <body>
-  <!-- Animated Background -->
-  <div class="animated-bg">
-    <div class="orb orb-1"></div>
-    <div class="orb orb-2"></div>
-    <div class="orb orb-3"></div>
-    <div class="particle-container" id="particles"></div>
+  <!-- Clean Subtle Background Structure (Zero neon orbs or fuzzy blurs) -->
+  <div class="matte-bg">
+    <div class="grid-overlay"></div>
   </div>
 
   <div class="container">
+    <!-- Top Bar with Version & Research Badge -->
+    <div class="top-bar">
+      <div class="brand-pill">
+        <span class="status-indicator"></span>
+        <span class="brand-name">Sentiment Engine</span>
+        <span class="version-tag">v2.0.0</span>
+      </div>
+      <div class="top-actions">
+        <button class="benchmark-toggle-btn" id="benchmark-toggle-btn" onclick="toggleBenchmarksModal()">
+          <span class="bench-icon">📊</span>
+          <span>Research Benchmarks</span>
+        </button>
+      </div>
+    </div>
+
     <!-- Header -->
     <header class="header">
-      <h1 class="title">
-        <span class="title-icon"></span>
-        Live Sentiment Analyzer
-        <span class="title-glow"></span>
-      </h1>
-      <p class="subtitle">Juggernaut Sentiment Analysis</p>
+      <h1 class="title">Live Sentiment Analyzer</h1>
+      <p class="subtitle">Interpretable binary sentiment detection powered by Scikit-Learn</p>
     </header>
 
-    <!-- Main Content -->
+    <!-- Main Content Grid -->
     <main class="main-content">
       <!-- Animated Character Section -->
       <div class="character-container">
-        <!-- Bookmark Model Selector (behind robot) -->
-        <div class="model-bookmark" id="model-bookmark">
-          <div class="bookmark-tab" id="bookmark-tab">
-            <span class="bookmark-icon">⚙</span>
-          </div>
-          <div class="bookmark-dropdown" id="bookmark-dropdown">
-            <label for="model-select">Select Model:</label>
-            <select id="model-select" class="model-dropdown">
-              <option value="">Loading models...</option>
-            </select>
-          </div>
-        </div>
-
         <div class="character" id="character">
           <!-- Neutral Robot -->
           <div class="robot neutral-robot" id="neutral-robot">
@@ -52,9 +53,6 @@
               <div class="antenna">
                 <div class="antenna-ball"></div>
               </div>
-              <!-- Tattoo decorations -->
-              <div class="robot-tattoo tattoo-left" id="tattoo-left-neutral"></div>
-              <div class="robot-tattoo tattoo-right" id="tattoo-right-neutral"></div>
               <div class="robot-face">
                 <div class="robot-eyes">
                   <div class="robot-eye left">
@@ -71,8 +69,6 @@
             </div>
             <div class="robot-body">
               <div class="body-light"></div>
-              <!-- Body tattoo stripe -->
-              <div class="body-tattoo" id="body-tattoo-neutral"></div>
               <div class="body-panel"></div>
             </div>
           </div>
@@ -81,11 +77,8 @@
           <div class="robot happy-robot" id="happy-robot" style="display: none;">
             <div class="robot-head">
               <div class="antenna">
-                <div class="antenna-ball happy-glow"></div>
+                <div class="antenna-ball happy-ball"></div>
               </div>
-              <!-- Tattoo decorations -->
-              <div class="robot-tattoo tattoo-left" id="tattoo-left-happy"></div>
-              <div class="robot-tattoo tattoo-right" id="tattoo-right-happy"></div>
               <div class="robot-face">
                 <div class="robot-eyes">
                   <div class="robot-eye left happy-eye">
@@ -106,8 +99,6 @@
             </div>
             <div class="robot-body">
               <div class="body-light happy-light"></div>
-              <!-- Body tattoo stripe -->
-              <div class="body-tattoo" id="body-tattoo-happy"></div>
               <div class="body-panel"></div>
               <div class="heart-burst">
                 <div class="heart">💚</div>
@@ -121,11 +112,8 @@
           <div class="robot sad-robot" id="sad-robot" style="display: none;">
             <div class="robot-head">
               <div class="antenna">
-                <div class="antenna-ball sad-glow"></div>
+                <div class="antenna-ball sad-ball"></div>
               </div>
-              <!-- Tattoo decorations -->
-              <div class="robot-tattoo tattoo-left" id="tattoo-left-sad"></div>
-              <div class="robot-tattoo tattoo-right" id="tattoo-right-sad"></div>
               <div class="robot-face">
                 <div class="robot-eyes">
                   <div class="robot-eye left sad-eye">
@@ -142,8 +130,6 @@
             </div>
             <div class="robot-body">
               <div class="body-light sad-light"></div>
-              <!-- Body tattoo stripe -->
-              <div class="body-tattoo" id="body-tattoo-sad"></div>
               <div class="body-panel"></div>
               <div class="rain-drops">
                 <div class="drop"></div>
@@ -152,92 +138,221 @@
               </div>
             </div>
           </div>
-
-          <div class="character-glow" id="character-glow"></div>
         </div>
+
         <p class="character-message" id="character-message">
-          Ready to analyze your sentiment...
+          Type a thought below to inspect its sentiment...
         </p>
       </div>
 
-
+      <!-- Quick Test Prompt Chips -->
+      <div class="chips-row">
+        <span class="chips-label">Quick test:</span>
+        <button class="chip" onclick="setExampleText('I absolutely love this new update! The performance is remarkable.')">
+          ✨ "Love this update!"
+        </button>
+        <button class="chip" onclick="setExampleText('Extremely disappointed with this experience, total waste of money.')">
+          ⚠️ "Total waste of money"
+        </button>
+        <button class="chip" onclick="setExampleText('Customer service was prompt, polite, and resolved my issue in minutes.')">
+          💬 "Prompt & polite service"
+        </button>
+        <button class="chip" onclick="setExampleText('Terrible build quality, crashed constantly right out of the box.')">
+          ❌ "Crashed right away"
+        </button>
+      </div>
 
       <!-- Input Section -->
-      <div class="input-section">
+      <div class="input-card">
         <div class="input-wrapper">
-          <textarea id="text-input" placeholder="Share your thoughts here... I'll detect the sentiment!" rows="4"
-            maxlength="500"></textarea>
-          <div class="char-counter">
-            <span id="char-count">0</span> / 500
+          <textarea 
+            id="text-input" 
+            placeholder="Enter a review, statement, or tweet here..."
+            rows="4"
+            maxlength="2000"
+          ></textarea>
+          <div class="input-footer">
+            <button class="text-action-btn" id="clear-input-btn" onclick="clearInput()" title="Clear text">
+              Clear
+            </button>
+            <div class="char-counter">
+              <span id="char-count">0</span> / 2000
+            </div>
           </div>
         </div>
-
-        <button class="predict-btn" id="predict-btn" onclick="makePrediction()">
-          <span class="btn-ripple"></span>
-          <span class="btn-text">Analyze Sentiment</span>
-        </button>
+        
+        <div class="button-bar">
+          <button class="predict-btn" id="predict-btn" onclick="makePrediction()">
+            <span class="btn-spinner" id="btn-spinner" style="display: none;"></span>
+            <span class="btn-text" id="btn-text">Analyze Sentiment</span>
+          </button>
+        </div>
       </div>
 
       <!-- Results Section -->
       <div class="results-section" id="results-section" style="display: none;">
         <div class="result-card" id="result-card">
           <div class="result-header">
-            <h3>Analysis Result <span class="info-icon"
-                title="AI models can make mistakes, especially the basic ones. Results should be verified for critical decisions.">ⓘ</span>
-            </h3>
-            <span class="result-badge" id="result-badge"></span>
-          </div>
-          <div class="result-body">
-            <p class="result-text" id="result-text"></p>
-            <div class="result-meta">
-              <span class="meta-item">
-                <strong>Speed:</strong>
-                <span id="inference-time">--</span> ms + <span id="network-delay">--</span> ms <span
-                  class="delay-label">(network)</span>
-              </span>
-              <span class="meta-item">
-                <strong>Model:</strong>
-                <span id="model-type">--</span>
-              </span>
+            <div class="result-title-group">
+              <span class="result-label">Sentiment Classification</span>
+              <span class="result-badge" id="result-badge"></span>
+            </div>
+            <div class="confidence-pill" id="confidence-pill">
+              <span id="confidence-val">--%</span> confidence
             </div>
           </div>
+
+          <div class="result-body">
+            <!-- Safe container for escaped text -->
+            <div class="input-quote-box">
+              <span class="quote-label">Input Text:</span>
+              <p class="result-text" id="result-text"></p>
+            </div>
+
+            <!-- Probability Bars -->
+            <div class="prob-distribution">
+              <div class="prob-bar-label">
+                <span>Positive: <strong id="pos-prob-val">--%</strong></span>
+                <span>Negative: <strong id="neg-prob-val">--%</strong></span>
+              </div>
+              <div class="prob-bar-track">
+                <div class="prob-bar-fill" id="prob-bar-fill"></div>
+              </div>
+            </div>
+
+            <!-- Meta metrics -->
+            <div class="result-meta">
+              <div class="meta-item">
+                <span class="meta-label">Latency</span>
+                <span class="meta-value"><span id="inference-time">--</span> ms</span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">Model Engine</span>
+                <span class="meta-value" id="model-type">Scikit-Learn Logistic Regression</span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">Vocabulary</span>
+                <span class="meta-value">80,000 N-Grams</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Live Runtime Statistics -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <span class="stat-label">Total Analyses</span>
+          <span class="stat-value" id="total-analyses">0</span>
+        </div>
+        <div class="stat-card stat-positive">
+          <span class="stat-label">Positive</span>
+          <span class="stat-value" id="positive-count">0</span>
+        </div>
+        <div class="stat-card stat-negative">
+          <span class="stat-label">Negative</span>
+          <span class="stat-value" id="negative-count">0</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Avg Latency</span>
+          <span class="stat-value"><span id="avg-time">0</span> ms</span>
         </div>
       </div>
 
       <!-- History Section -->
       <div class="history-section">
         <div class="history-header">
-          <h3>Recent Analyses <span class="info-icon"
-              title="Speed breakdown: Model inference time + Network delay (round-trip time to reach the frontend from backend)">ⓘ</span>
-          </h3>
+          <div class="history-title-wrap">
+            <h3>Recent Session History</h3>
+            <span class="history-count" id="history-counter">(0)</span>
+          </div>
           <button class="clear-btn" id="clear-history" onclick="clearHistory()">
-            Clear
+            Clear History
           </button>
         </div>
         <div class="history-list" id="history-list">
-          <p class="empty-state">No analyses yet. Start by entering some text above!</p>
+          <p class="empty-state">No analyses yet. Enter text above to inspect sentiment.</p>
         </div>
       </div>
     </main>
 
+    <!-- Research Benchmarks Modal / Drawer -->
+    <div class="modal-overlay" id="benchmarks-modal" style="display: none;" onclick="closeBenchmarksOnBackdrop(event)">
+      <div class="modal-card">
+        <div class="modal-header">
+          <div class="modal-title-group">
+            <h3>Model Research Benchmarks</h3>
+            <span class="modal-subtitle">Adeoluwa Adeboye Sentiment140 Dataset (1.57M sentences)</span>
+          </div>
+          <button class="modal-close-btn" onclick="toggleBenchmarksModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+          <table class="benchmarks-table">
+            <thead>
+              <tr>
+                <th>Research Metric</th>
+                <th>Score</th>
+                <th>Evaluation Context</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>F1-Score</strong></td>
+                <td><span class="score-badge">82.37%</span></td>
+                <td>Test partition harmonic mean</td>
+              </tr>
+              <tr>
+                <td><strong>Accuracy</strong></td>
+                <td><span class="score-badge">82.36%</span></td>
+                <td>Overall test set accuracy</td>
+              </tr>
+              <tr>
+                <td><strong>ROC-AUC</strong></td>
+                <td><span class="score-badge">0.9022</span></td>
+                <td>Area under ROC curve</td>
+              </tr>
+              <tr>
+                <td><strong>Precision</strong></td>
+                <td><span class="score-badge">81.85%</span></td>
+                <td>Positive predictive value</td>
+              </tr>
+              <tr>
+                <td><strong>Recall / Sensitivity</strong></td>
+                <td><span class="score-badge">82.90%</span></td>
+                <td>True positive discovery rate</td>
+              </tr>
+              <tr>
+                <td><strong>Specificity</strong></td>
+                <td><span class="score-badge">81.83%</span></td>
+                <td>True negative discovery rate</td>
+              </tr>
+              <tr>
+                <td><strong>Matthews Correlation (MCC)</strong></td>
+                <td><span class="score-badge">0.6473</span></td>
+                <td>Balanced binary correlation</td>
+              </tr>
+              <tr>
+                <td><strong>P95 Inference Latency</strong></td>
+                <td><span class="score-badge">3.85 ms</span></td>
+                <td>Pure CPU single-item benchmark</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="modal-footnote">
+            <p><strong>Architecture:</strong> Scikit-Learn <code>Pipeline([('vectorizing', TfidfVectorizer(max_features=80000, ngram_range=(1,5))), ('classifier', LogisticRegression(solver='saga', penalty='l2', max_iter=800, C=1))])</code></p>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Footer -->
     <footer class="footer">
-      <p>Powered by FastAPI and JAX | Made by Punyak</p>
+      <p>Sentiment Analyzer v2.0.0 • Pure Scikit-Learn & FastAPI • Deployed on Railway & Vercel</p>
     </footer>
   </div>
 
-  <!-- Loading Overlay -->
-  <div class="loading-overlay" id="loading-overlay">
-    <div class="loading-container">
-      <div class="loading-robot">
-        <div class="loading-head"></div>
-        <div class="loading-body"></div>
-      </div>
-      <p class="loading-text">Analyzing...</p>
-    </div>
-  </div>
-
+  <!-- Runtime Config & App Logic -->
+  <script src="config.js"></script>
   <script src="app.js"></script>
 </body>
-
 </html>

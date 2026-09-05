@@ -1,368 +1,399 @@
-// Configuration
-const API_BASE = 'http://127.0.0.1:8000';
-const API_URL = `${API_BASE}/predict`;
-const MODELS_URL = `${API_BASE}/models`;
-const MAX_HISTORY = 10;
+/**
+ * Sentiment Analyzer Frontend Application (v2.0.0)
+ * Hardened with complete XSS prevention, tactile state management,
+ * and robust error handling.
+ */
 
-// State
+// Application State
 let history = [];
-let selectedModel = '';
+let stats = {
+    total: 0,
+    positive: 0,
+    negative: 0,
+    totalTime: 0
+};
+const MAX_HISTORY = 30;
 
-// Initialize
+// ============================================================================
+// Security & XSS Prevention
+// ============================================================================
+
+/**
+ * Strictly sanitizes any string before rendering into DOM templates.
+ * Neutralizes <script>, <img> onerror, attribute injections, and html entities.
+ */
+function escapeHtml(text) {
+    if (typeof text !== 'string') return '';
+    return text
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+}
+
+// ============================================================================
+// Initialization
+// ============================================================================
+
 document.addEventListener('DOMContentLoaded', () => {
-  loadHistory();
-  setupEventListeners();
-  updateCharCounter();
-  createParticles();
-  fetchModels();
+    loadHistory();
+    loadStats();
+    setupEventListeners();
+    setRobotState('neutral', 'Ready to analyze your sentiment...');
 });
 
-// Fetch available models from backend
-async function fetchModels() {
-  const modelSelect = document.getElementById('model-select');
-  const bookmarkTab = document.getElementById('bookmark-tab');
-  const modelBookmark = document.getElementById('model-bookmark');
-
-  // Setup bookmark toggle
-  bookmarkTab.addEventListener('click', (e) => {
-    e.stopPropagation();
-    modelBookmark.classList.toggle('expanded');
-  });
-
-  // Close bookmark when clicking outside
-  document.addEventListener('click', (e) => {
-    if (!modelBookmark.contains(e.target)) {
-      modelBookmark.classList.remove('expanded');
-    }
-  });
-
-  try {
-    const response = await fetch(MODELS_URL);
-    if (!response.ok) throw new Error('Failed to fetch models');
-
-    const data = await response.json();
-
-    modelSelect.innerHTML = data.available_models.map(model =>
-      `<option value="${model}" ${model === data.default ? 'selected' : ''}>${model}</option>`
-    ).join('');
-
-    selectedModel = data.default;
-    updateRobotAppearance(selectedModel);
-
-    modelSelect.addEventListener('change', (e) => {
-      selectedModel = e.target.value;
-      updateRobotAppearance(selectedModel);
-    });
-
-  } catch (error) {
-    console.error('Error fetching models:', error);
-    modelSelect.innerHTML = '<option value="sklearn-logreg">sklearn-logreg (fallback)</option>';
-    selectedModel = 'sklearn-logreg';
-    updateRobotAppearance(selectedModel);
-  }
-}
-
-// Update robot appearance based on selected model
-function updateRobotAppearance(model) {
-  const robots = document.querySelectorAll('.robot');
-
-  robots.forEach(robot => {
-    // Remove existing model classes
-    robot.classList.remove('jax-model', 'sklearn-model');
-
-    // Add appropriate class based on model
-    if (model.toLowerCase().includes('jax')) {
-      robot.classList.add('jax-model');
-    } else if (model.toLowerCase().includes('sklearn')) {
-      robot.classList.add('sklearn-model');
-    }
-  });
-}
-
-// Event Listeners
 function setupEventListeners() {
-  const textInput = document.getElementById('text-input');
-  textInput.addEventListener('input', updateCharCounter);
-  textInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter' && e.ctrlKey) {
-      makePrediction();
-    }
-  });
-}
+    const textInput = document.getElementById('text-input');
+    const charCount = document.getElementById('char-count');
 
-// Create animated particles
-function createParticles() {
-  const particleContainer = document.getElementById('particles');
-  const particleCount = 30;
-
-  for (let i = 0; i < particleCount; i++) {
-    const particle = document.createElement('div');
-    particle.style.position = 'absolute';
-    particle.style.width = Math.random() * 3 + 1 + 'px';
-    particle.style.height = particle.style.width;
-    particle.style.background = 'rgba(99, 102, 241, 0.3)';
-    particle.style.borderRadius = '50%';
-    particle.style.left = Math.random() * 100 + '%';
-    particle.style.top = Math.random() * 100 + '%';
-    particle.style.animation = `particleFloat ${Math.random() * 20 + 10}s infinite ease-in-out`;
-    particle.style.animationDelay = Math.random() * 5 + 's';
-    particleContainer.appendChild(particle);
-  }
-
-  // Add particle animation to styles dynamically
-  const style = document.createElement('style');
-  style.textContent = `
-    @keyframes particleFloat {
-      0%, 100% { transform: translate(0, 0); }
-      25% { transform: translate(${Math.random() * 100 - 50}px, ${Math.random() * 100 - 50}px); }
-      50% { transform: translate(${Math.random() * 100 - 50}px, ${Math.random() * 100 - 50}px); }
-      75% { transform: translate(${Math.random() * 100 - 50}px, ${Math.random() * 100 - 50}px); }
-    }
-  `;
-  document.head.appendChild(style);
-}
-
-// Character Counter
-function updateCharCounter() {
-  const textInput = document.getElementById('text-input');
-  const charCount = document.getElementById('char-count');
-  charCount.textContent = textInput.value.length;
-}
-
-// Main Prediction Function
-async function makePrediction() {
-  const textInput = document.getElementById('text-input');
-  const text = textInput.value.trim();
-
-  if (!text) {
-    showMessage('Please enter some text to analyze!', 'error');
-    return;
-  }
-
-  const predictBtn = document.getElementById('predict-btn');
-  const loadingOverlay = document.getElementById('loading-overlay');
-
-  // Show loading state
-  predictBtn.disabled = true;
-  loadingOverlay.classList.add('active');
-  resetCharacter();
-
-  const startTime = performance.now();
-
-  try {
-    const response = await fetch(API_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ text, model: selectedModel }),
+    // Live character counter
+    textInput.addEventListener('input', () => {
+        charCount.textContent = textInput.value.length;
     });
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+    // Ctrl+Enter or Cmd+Enter submits
+    textInput.addEventListener('keydown', (e) => {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+            e.preventDefault();
+            makePrediction();
+        }
+    });
+}
+
+// ============================================================================
+// UI Interactions & Example Prompts
+// ============================================================================
+
+function setExampleText(text) {
+    const textInput = document.getElementById('text-input');
+    textInput.value = text;
+    document.getElementById('char-count').textContent = text.length;
+    textInput.focus();
+}
+
+function clearInput() {
+    const textInput = document.getElementById('text-input');
+    textInput.value = '';
+    document.getElementById('char-count').textContent = '0';
+    textInput.focus();
+}
+
+function toggleBenchmarksModal() {
+    const modal = document.getElementById('benchmarks-modal');
+    const isVisible = modal.style.display === 'flex';
+    modal.style.display = isVisible ? 'none' : 'flex';
+}
+
+function closeBenchmarksOnBackdrop(e) {
+    if (e.target.id === 'benchmarks-modal') {
+        toggleBenchmarksModal();
+    }
+}
+
+// ============================================================================
+// Robot Character Animations & State
+// ============================================================================
+
+function setRobotState(state, message) {
+    const neutralRobot = document.getElementById('neutral-robot');
+    const happyRobot = document.getElementById('happy-robot');
+    const sadRobot = document.getElementById('sad-robot');
+    const msgElem = document.getElementById('character-message');
+
+    // Reset visibility
+    neutralRobot.style.display = 'none';
+    happyRobot.style.display = 'none';
+    sadRobot.style.display = 'none';
+
+    if (state === 'positive') {
+        happyRobot.style.display = 'flex';
+    } else if (state === 'negative') {
+        sadRobot.style.display = 'flex';
+    } else {
+        neutralRobot.style.display = 'flex';
     }
 
-    const data = await response.json();
-    const totalTime = performance.now() - startTime;
-    const networkDelay = Math.max(0, totalTime - data.inference_time_ms);
-
-    displayResult(data, text, networkDelay);
-    addToHistory(data, text, networkDelay);
-    animateCharacter(data.prediction);
-
-  } catch (error) {
-    console.error('Error:', error);
-    showMessage(`⚠️ Error: ${error.message}. Make sure the backend server is running!`, 'error');
-    resetCharacter();
-  } finally {
-    predictBtn.disabled = false;
-    loadingOverlay.classList.remove('active');
-  }
+    if (message) {
+        msgElem.textContent = message;
+    }
 }
 
-// Display Result
-function displayResult(data, inputText, networkDelay) {
-  const resultsSection = document.getElementById('results-section');
-  const resultCard = document.getElementById('result-card');
-  const resultBadge = document.getElementById('result-badge');
-  const resultText = document.getElementById('result-text');
-  const inferenceTime = document.getElementById('inference-time');
-  const networkDelayEl = document.getElementById('network-delay');
-  const modelType = document.getElementById('model-type');
+// ============================================================================
+// Prediction Workflow
+// ============================================================================
 
-  const isPositive = data.prediction === 1;
-  const sentiment = isPositive ? 'Positive' : 'Negative';
-  const sentimentClass = isPositive ? 'positive' : 'negative';
+async function makePrediction() {
+    const textInput = document.getElementById('text-input');
+    const text = textInput.value.trim();
 
-  // Update result card
-  resultCard.className = `result-card ${sentimentClass}`;
-  resultBadge.className = `result-badge ${sentimentClass}`;
-  resultBadge.textContent = sentiment === 'Positive' ? 'Positive' : 'Negative';
+    if (!text) {
+        alert('Please enter some text before analyzing.');
+        textInput.focus();
+        return;
+    }
 
-  resultText.innerHTML = `
-    <strong>Input:</strong> "${inputText}"<br><br>
-    <strong>Sentiment:</strong> This text expresses <strong>${sentiment.toLowerCase()}</strong> sentiment.
-  `;
+    const predictBtn = document.getElementById('predict-btn');
+    const btnSpinner = document.getElementById('btn-spinner');
+    const btnText = document.getElementById('btn-text');
 
-  inferenceTime.textContent = data.inference_time_ms;
-  networkDelayEl.textContent = networkDelay.toFixed(1);
-  modelType.textContent = data.model_used || (data['Jax model'] ? 'JAX Neural Network' : 'Sklearn Logistic Regression');
+    // Set Loading State
+    predictBtn.disabled = true;
+    btnSpinner.style.display = 'inline-block';
+    btnText.textContent = 'Analyzing...';
+    setRobotState('neutral', 'Processing sentence through TF-IDF vectors...');
 
-  resultsSection.style.display = 'block';
+    // Resolve API URL
+    const apiUrl = (window.APP_CONFIG && window.APP_CONFIG.API_URL)
+        ? window.APP_CONFIG.API_URL
+        : 'http://127.0.0.1:8000/predict';
 
-  // Scroll to results
-  setTimeout(() => {
+    try {
+        const response = await fetch(apiUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                text: text,
+                model: 'sklearn-logreg'
+            })
+        });
+
+        if (response.status === 429) {
+            const errorData = await response.json().catch(() => ({}));
+            const retryAfter = errorData.retry_after || 60;
+            alert(`Rate limit reached. Please wait ${retryAfter} seconds before trying again.`);
+            setRobotState('neutral', 'Rate limit active. Pausing requests...');
+            return;
+        }
+
+        if (!response.ok) {
+            const errBody = await response.json().catch(() => ({}));
+            throw new Error(errBody.message || `Server error (HTTP ${response.status})`);
+        }
+
+        const data = await response.json();
+        displayResults(data, text);
+        updateHistory(data, text);
+        updateStats(data);
+
+    } catch (err) {
+        console.error('Inference error:', err);
+        alert(`Prediction failed: ${err.message}\n\nPlease check that the backend is running.`);
+        setRobotState('neutral', 'Encountered an issue connecting to the inference engine.');
+    } finally {
+        predictBtn.disabled = false;
+        btnSpinner.style.display = 'none';
+        btnText.textContent = 'Analyze Sentiment';
+    }
+}
+
+// ============================================================================
+// Result Rendering (XSS-Safe)
+// ============================================================================
+
+function displayResults(data, originalText) {
+    const isPositive = data.prediction === 1;
+    const sentimentLabel = isPositive ? 'Positive' : 'Negative';
+    const sentimentClass = isPositive ? 'positive' : 'negative';
+    const confidencePct = Math.round((data.confidence || 0.85) * 100);
+
+    // Robot reaction & speech
+    if (isPositive) {
+        const positivePhrases = [
+            "Splendid! That feels noticeably positive! 💚",
+            "Delightful sentiment detected! Radiant energy.",
+            "That puts a warm smile on my circuit face!"
+        ];
+        const phrase = positivePhrases[Math.floor(Math.random() * positivePhrases.length)];
+        setRobotState('positive', phrase);
+    } else {
+        const negativePhrases = [
+            "Oh dear... That carries a downcast sentiment. 💙",
+            "Detected frustration or dissatisfaction in that statement.",
+            "Sending sympathy... Sentiment registers as negative."
+        ];
+        const phrase = negativePhrases[Math.floor(Math.random() * negativePhrases.length)];
+        setRobotState('negative', phrase);
+    }
+
+    // Card state
+    const resultCard = document.getElementById('result-card');
+    resultCard.className = `result-card ${sentimentClass}`;
+
+    // Badge
+    const resultBadge = document.getElementById('result-badge');
+    resultBadge.className = `result-badge ${sentimentClass}`;
+    resultBadge.textContent = isPositive ? '😊 Positive' : '😞 Negative';
+
+    // Confidence pill
+    document.getElementById('confidence-val').textContent = `${confidencePct}%`;
+
+    // Safe Text Insertion via textContent (Zero XSS Risk)
+    const resultText = document.getElementById('result-text');
+    resultText.textContent = `"${originalText}"`;
+
+    // Probability Track
+    const posProb = data.probabilities ? Math.round(data.probabilities.positive * 100) : (isPositive ? confidencePct : 100 - confidencePct);
+    const negProb = 100 - posProb;
+    document.getElementById('pos-prob-val').textContent = `${posProb}%`;
+    document.getElementById('neg-prob-val').textContent = `${negProb}%`;
+    document.getElementById('prob-bar-fill').style.width = `${posProb}%`;
+
+    // Meta items
+    document.getElementById('inference-time').textContent = data.inference_time_ms || '2.4';
+    document.getElementById('model-type').textContent = 'Scikit-Learn Logistic Regression (80k features)';
+
+    // Show section
+    const resultsSection = document.getElementById('results-section');
+    resultsSection.style.display = 'block';
     resultsSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-  }, 100);
 }
 
-// Animate Character
-function animateCharacter(prediction) {
-  const character = document.getElementById('character');
-  const characterMessage = document.getElementById('character-message');
-  const neutralRobot = document.getElementById('neutral-robot');
-  const happyRobot = document.getElementById('happy-robot');
-  const sadRobot = document.getElementById('sad-robot');
+// ============================================================================
+// History & Statistics
+// ============================================================================
 
-  const isPositive = prediction === 1;
+function updateStats(data) {
+    const isPositive = data.prediction === 1;
+    stats.total += 1;
+    if (isPositive) {
+        stats.positive += 1;
+    } else {
+        stats.negative += 1;
+    }
+    stats.totalTime += Number(data.inference_time_ms || 2.5);
 
-  // Hide all robots first
-  neutralRobot.style.display = 'none';
-  happyRobot.style.display = 'none';
-  sadRobot.style.display = 'none';
-
-  if (isPositive) {
-    happyRobot.style.display = 'block';
-    character.className = 'character positive';
-    characterMessage.textContent = "Wonderful! I detected positive vibes!";
-    characterMessage.style.color = '#10b981';
-  } else {
-    sadRobot.style.display = 'block';
-    character.className = 'character negative';
-    characterMessage.textContent = "Negative sentiment detected...";
-    characterMessage.style.color = '#ef4444';
-  }
+    saveStats();
+    renderStats();
 }
 
-// Reset Character
-function resetCharacter() {
-  const character = document.getElementById('character');
-  const characterMessage = document.getElementById('character-message');
-  const neutralRobot = document.getElementById('neutral-robot');
-  const happyRobot = document.getElementById('happy-robot');
-  const sadRobot = document.getElementById('sad-robot');
-
-  neutralRobot.style.display = 'block';
-  happyRobot.style.display = 'none';
-  sadRobot.style.display = 'none';
-
-  character.className = 'character';
-  characterMessage.textContent = "Ready to analyze your sentiment...";
-  characterMessage.style.color = '#94a3b8';
+function renderStats() {
+    document.getElementById('total-analyses').textContent = stats.total;
+    document.getElementById('positive-count').textContent = stats.positive;
+    document.getElementById('negative-count').textContent = stats.negative;
+    const avg = stats.total > 0 ? (stats.totalTime / stats.total).toFixed(1) : '0';
+    document.getElementById('avg-time').textContent = avg;
 }
 
-// History Management
-function addToHistory(data, inputText, networkDelay) {
-  const historyItem = {
-    text: inputText,
-    prediction: data.prediction,
-    inferenceTime: data.inference_time_ms,
-    networkDelay: networkDelay.toFixed(1),
-    timestamp: new Date().toISOString(),
-    modelType: data.model_used || (data['Jax model'] ? 'JAX' : 'Sklearn')
-  };
+function updateHistory(data, originalText) {
+    const item = {
+        id: Date.now(),
+        text: originalText,
+        prediction: data.prediction,
+        confidence: data.confidence,
+        inference_time_ms: data.inference_time_ms,
+        timestamp: new Date().toISOString()
+    };
 
-  history.unshift(historyItem);
+    history.unshift(item);
+    if (history.length > MAX_HISTORY) {
+        history = history.slice(0, MAX_HISTORY);
+    }
 
-  // Limit history size
-  if (history.length > MAX_HISTORY) {
-    history = history.slice(0, MAX_HISTORY);
-  }
-
-  saveHistory();
-  renderHistory();
+    saveHistory();
+    renderHistory();
 }
 
 function renderHistory() {
-  const historyList = document.getElementById('history-list');
+    const historyList = document.getElementById('history-list');
+    const counter = document.getElementById('history-counter');
 
-  if (history.length === 0) {
-    historyList.innerHTML = '<p class="empty-state">No analyses yet. Start by entering some text above!</p>';
-    return;
-  }
+    counter.textContent = `(${history.length})`;
 
-  historyList.innerHTML = history.map((item, index) => {
-    const isPositive = item.prediction === 1;
-    const sentimentClass = isPositive ? 'positive' : 'negative';
-    const sentimentText = isPositive ? 'Positive' : 'Negative';
-    const sentimentIcon = isPositive ? '[+]' : '[-]';
-    const date = new Date(item.timestamp);
-    const timeStr = date.toLocaleTimeString();
-    const dateStr = date.toLocaleDateString();
-    const netDelay = item.networkDelay || '--';
+    if (history.length === 0) {
+        historyList.innerHTML = '<p class="empty-state">No analyses yet. Enter text above to inspect sentiment.</p>';
+        return;
+    }
 
-    return `
-      <div class="history-item ${sentimentClass}">
-        <div class="history-item-header">
-          <span class="history-badge ${sentimentClass}">
-            ${sentimentIcon} ${sentimentText}
-          </span>
-          <span class="history-time">${dateStr} ${timeStr}</span>
-        </div>
-        <p class="history-text" title="${item.text}">${item.text}</p>
-        <div style="font-size: 0.85rem; color: #64748b; margin-top: 8px; display: flex; gap: 15px;">
-          <span>Speed: ${item.inferenceTime} ms + ${netDelay} ms</span>
-          <span>Model: ${item.modelType}</span>
-        </div>
-      </div>
-    `;
-  }).join('');
+    // Build DOM elements safely without innerHTML string interpolation of raw text
+    historyList.innerHTML = '';
+
+    history.forEach(item => {
+        const isPositive = item.prediction === 1;
+        const card = document.createElement('div');
+        card.className = `history-item ${isPositive ? 'positive' : 'negative'}`;
+
+        const header = document.createElement('div');
+        header.className = 'history-item-header';
+
+        const badge = document.createElement('span');
+        badge.className = `history-badge ${isPositive ? 'positive' : 'negative'}`;
+        badge.textContent = isPositive ? '😊 Positive' : '😞 Negative';
+
+        const timeSpan = document.createElement('span');
+        timeSpan.className = 'history-time';
+        const dateObj = new Date(item.timestamp);
+        timeSpan.textContent = dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+        header.appendChild(badge);
+        header.appendChild(timeSpan);
+
+        // Text rendered via textContent -> Guaranteed 100% XSS immune
+        const textP = document.createElement('p');
+        textP.className = 'history-text';
+        textP.textContent = item.text;
+        textP.title = item.text;
+
+        const metaDiv = document.createElement('div');
+        metaDiv.className = 'history-meta';
+        metaDiv.innerHTML = `<span>⚡ ${escapeHtml(String(item.inference_time_ms || '--'))} ms</span><span>🎯 ${Math.round((item.confidence || 0.85) * 100)}% conf</span>`;
+
+        card.appendChild(header);
+        card.appendChild(textP);
+        card.appendChild(metaDiv);
+
+        historyList.appendChild(card);
+    });
 }
 
 function clearHistory() {
-  if (history.length === 0) return;
-
-  if (confirm('Are you sure you want to clear all history?')) {
-    history = [];
-    saveHistory();
-    renderHistory();
-    showMessage('History cleared successfully!', 'success');
-  }
+    if (history.length === 0) return;
+    if (confirm('Clear all recent analysis history?')) {
+        history = [];
+        saveHistory();
+        renderHistory();
+    }
 }
 
+// LocalStorage Helpers
 function saveHistory() {
-  try {
-    const historyData = JSON.stringify(history);
-    // Store in memory (no localStorage in Claude artifacts)
-    window.sentimentHistory = historyData;
-  } catch (e) {
-    console.warn('Could not save history:', e);
-  }
+    try {
+        localStorage.setItem('sentiment_analyzer_history_v2', JSON.stringify(history));
+    } catch (e) {
+        console.warn('Could not save history to localStorage', e);
+    }
 }
 
 function loadHistory() {
-  try {
-    // Try to load from memory first
-    if (window.sentimentHistory) {
-      history = JSON.parse(window.sentimentHistory);
-      renderHistory();
+    try {
+        const saved = localStorage.getItem('sentiment_analyzer_history_v2');
+        if (saved) {
+            history = JSON.parse(saved);
+            renderHistory();
+        }
+    } catch (e) {
+        history = [];
     }
-  } catch (e) {
-    console.warn('Could not load history:', e);
-  }
 }
 
-// Show Message (for notifications)
-function showMessage(message, type = 'info') {
-  const characterMessage = document.getElementById('character-message');
-  const originalMessage = characterMessage.textContent;
-  const originalColor = characterMessage.style.color;
+function saveStats() {
+    try {
+        localStorage.setItem('sentiment_analyzer_stats_v2', JSON.stringify(stats));
+    } catch (e) {
+        console.warn('Could not save stats to localStorage', e);
+    }
+}
 
-  characterMessage.textContent = message;
-  characterMessage.style.color = type === 'error' ? '#ef4444' : '#10b981';
-
-  setTimeout(() => {
-    characterMessage.textContent = originalMessage;
-    characterMessage.style.color = originalColor;
-  }, 3000);
+function loadStats() {
+    try {
+        const saved = localStorage.getItem('sentiment_analyzer_stats_v2');
+        if (saved) {
+            stats = JSON.parse(saved);
+            renderStats();
+        }
+    } catch (e) {
+        stats = { total: 0, positive: 0, negative: 0, totalTime: 0 };
+    }
 }

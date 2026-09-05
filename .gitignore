@@ -1,13 +1,45 @@
-# Ignore Python cache directories and files
+# Python cache and bytecode
 __pycache__/
 *.py[cod]
 *$py.class
-**/__pycache__/
-**/.ipynb_checkpoints/
+*.so
+.Python
+env/
+venv/
+.venv/
+ENV/
 
-# Ignore Jupyter notebook checkpoints
+# Jupyter Notebook checkpoints
 .ipynb_checkpoints/
+*/.ipynb_checkpoints/*
 
-# logs
+# Testing and coverage
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+
+# Logs and runtime outputs
+*.log
+logs/*.log
 **/inference.log
+logs/training_logs/*.csv
+logs/inferences/*.log
+
+# Datasets - large raw and processed files (do not push to git)
+data/
+data/raw/
+data/processed/
+
+# Temporary / Scratch
+tmp/
+*.tmp
+.DS_Store
+
+# Deployment build caches
 .vercel
